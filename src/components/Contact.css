@@ -1,0 +1,68 @@
+.contact {
+  position: relative;
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.contact::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -160px;
+  transform: translateX(-50%);
+  width: 640px;
+  height: 320px;
+  background: radial-gradient(ellipse, rgba(124,140,255,0.14), transparent 65%);
+  pointer-events: none;
+}
+
+.contact-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 110px 32px 48px;
+  text-align: center;
+  position: relative;
+}
+
+.contact-eyebrow { justify-content: center; }
+.contact-eyebrow::before { display: none; }
+
+.contact-title {
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  line-height: 1.25;
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
+.contact-email {
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  display: inline-block;
+  padding: 14px 30px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.contact-email:hover {
+  border-color: var(--peri);
+  box-shadow: 0 0 30px -8px rgba(124, 140, 255, 0.6);
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 44px;
+  font-size: 14px;
+}
+.contact-links a { color: var(--text-dim); transition: color 0.15s ease; }
+.contact-links a:hover { color: var(--text); }
+
+.contact-foot {
+  margin-top: 60px;
+  font-size: 11.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}

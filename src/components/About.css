@@ -1,0 +1,29 @@
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.about-lead {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.about-detail {
+  padding: 34px 36px;
+}
+
+.about-detail p {
+  color: var(--text-dim);
+  margin-bottom: 18px;
+  font-size: 1rem;
+}
+.about-detail p:last-child { margin-bottom: 0; }
+
+@media (max-width: 880px) {
+  .about-grid { grid-template-columns: 1fr; gap: 30px; }
+}
