@@ -159,3 +159,56 @@
   .hero-visual { height: 340px; min-height: 300px; order: 2; }
   .hero-scroll-cue { display: none; }
 }
+
+/* --- Typing text in the hero eyebrow --- */
+.hero-eyebrow {
+  min-width: 340px;
+  justify-content: flex-start;
+}
+.typing-text {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: caretBlink 1s steps(1) infinite;
+}
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typing-cursor { animation: none; opacity: 0; }
+}
+@media (max-width: 880px) {
+  .hero-eyebrow { min-width: 0; max-width: 100%; }
+  .typing-text { white-space: normal; }
+}
+
+/* --- Hero metrics (social proof under the CTAs) --- */
+.hero-metrics {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+}
+.hero-metrics strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.hero-metric-div {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}

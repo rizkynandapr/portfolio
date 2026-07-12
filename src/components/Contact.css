@@ -66,3 +66,40 @@
   color: var(--text-faint);
   letter-spacing: 0.04em;
 }
+
+/* --- Email link "Copied!" tooltip --- */
+.email-link {
+  position: relative;
+}
+.email-copied {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--space);
+  background: var(--cyan);
+  box-shadow: 0 4px 16px -4px rgba(79, 209, 224, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+}
+.email-copied.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.email-copied::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: var(--cyan);
+}
