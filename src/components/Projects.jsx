@@ -34,9 +34,32 @@ const TALENTSCOUT_FLOW = [
   { label: 'Hiring Dashboard', detail: 'Renders a corporate-style HTML dashboard — navy, white, grey — with candidate comparisons and interview recommendations a hiring manager can act on.' },
 ];
 
+const LEGALITASAI_FLOW = [
+  { label: 'PDF Peraturan', detail: 'Regulations come as scanned PDFs from the government portal. The OCR is rough — "Pasal 3O" with a letter O, "Pasa14" where the spacing collapsed, headers spelled four different ways across the same document.' },
+  { label: 'Clean & Parse', detail: 'Boilerplate gets stripped by frequency and fuzzy matching, then a parser walks the legal hierarchy — BAB, Pasal, Ayat. Every OCR quirk I hit is a regression test now, because the next document will break in the same way.' },
+  { label: 'Chunk per-Pasal', detail: 'One chunk equals one Pasal, carrying its parent context and a status flag. Fixed-size chunking would cut clauses in half — in legal text that changes what the rule means.' },
+  { label: 'Hybrid Retrieval', detail: 'BM25 catches exact references like "PP 55/2022"; dense embeddings catch how a shop owner actually phrases things. RRF merges both rankings. Revoked regulations get filtered here, before top-k — not after.' },
+  { label: 'Router (Haiku)', detail: 'A cheap model classifies the question first: legal, out of scope, or too vague. No point spending a strong model on "how do I file for divorce".' },
+  { label: 'Generate (Sonnet)', detail: 'The answer has to be plain Indonesian and every claim has to carry a citation in a fixed format. Retrieved Pasal go in as context; nothing else is allowed as a source.' },
+  { label: 'Citation Validator', detail: 'This is the part that matters. Every citation gets parsed and checked against what was actually retrieved. Hallucinated one? Regenerate with explicit feedback. Still wrong? The system refuses to answer.' },
+  { label: 'Answer + Sources', detail: 'What ships is the answer, the exact Pasal it leaned on, whether each one is still in force, and the citation accuracy for that response — so you can check the work instead of trusting it.' },
+];
+
 const PROJECTS = [
   {
     id: '01',
+    name: 'LegalitasAI',
+    tag: 'RAG with a Citation Guardrail',
+    period: '2026 · Open source',
+    problem: "60 million small businesses here, and the rules that bind them sit across dozens of legal documents nobody wrote for a shop owner to read. A lawyer is expensive. Ask a normal LLM and you get a confident answer that's sometimes wrong — and in legal territory, wrong means a fine.",
+    build: "A RAG assistant that isn't allowed to answer without proof. Every claim has to cite the actual Pasal and Ayat, and a validator checks that citation exists in the retrieved documents before the answer ships. Can't prove it, it refuses. It also tracks which regulations have been revoked — moving that filter into the ranking step instead of after top-k took Hit Rate@5 from 63.6% to 81.8%, because revoked docs were outscoring live ones and eating the whole top-5. The corpus is real scanned PDFs from the government portal, so most of the work was surviving broken OCR. 43 tests, CI with an eval-gate, 7 ADRs recording what I rejected and why.",
+    stack: ['Python', 'FastAPI', 'BM25 + RRF', 'Qdrant', 'Claude', 'Langfuse', 'Docker'],
+    links: { code: 'https://github.com/rizkynandapr/legalitasai' },
+    flow: LEGALITASAI_FLOW,
+    flowLabel: 'One question, end to end',
+  },
+  {
+    id: '02',
     name: 'WhatsApp AI Chatbot',
     tag: 'Universal n8n Template for SMBs',
     period: '2026 · Open source',
@@ -48,7 +71,7 @@ const PROJECTS = [
     flowLabel: 'One message in, node by node',
   },
   {
-    id: '02',
+    id: '03',
     name: 'ApplyIQ',
     tag: 'AI Job Application Assistant',
     period: 'May 2026 – Jul 2026',
@@ -60,7 +83,7 @@ const PROJECTS = [
     flowLabel: 'The pipeline, node by node',
   },
   {
-    id: '03',
+    id: '04',
     name: 'TalentScout',
     tag: 'AI Recruitment Pipeline',
     period: 'Jun 2026',
@@ -72,7 +95,7 @@ const PROJECTS = [
     flowLabel: 'How a CV becomes a hiring decision',
   },
   {
-    id: '04',
+    id: '05',
     name: 'Clickbait Detector',
     tag: 'NLP Headline Classifier',
     period: '2025',
@@ -95,7 +118,7 @@ export default function Projects() {
     <section id="work" className="section projects">
       <div className="section-head">
         <p className="section-eyebrow">Selected work</p>
-        <h2 className="section-title">Three things I built<br />because the manual version got old.</h2>
+        <h2 className="section-title">Things I built<br />because the manual version got old.</h2>
       </div>
 
       <div className="projects-layout" ref={revealRef}>
