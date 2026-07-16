@@ -3,6 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 // Types out each phrase, holds it, deletes it, then moves to the next —
 // looping forever with a blinking cursor. If the visitor prefers reduced
 // motion, it just shows the first phrase, statically, no animation.
+//
+// Layout stability: an invisible "ghost" of the longest phrase reserves the
+// final width AND height of the pill, and the live text is absolutely
+// positioned on top of it. Without this, the pill resizes on every keystroke
+// and (on narrow screens) wraps to two lines mid-phrase — which shoves the
+// whole page up and down once per type/delete cycle.
 export default function TypingText({
   phrases,
   typeSpeed = 55,
@@ -13,6 +19,8 @@ export default function TypingText({
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
   const reduced = useRef(false);
+
+  const longest = phrases.reduce((a, b) => (b.length > a.length ? b : a), '');
 
   useEffect(() => {
     reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,9 +60,12 @@ export default function TypingText({
   }, [text, deleting, phraseIndex, phrases, typeSpeed, deleteSpeed, holdTime]);
 
   return (
-    <span className="typing-text">
-      {text}
-      <span className="typing-cursor" aria-hidden="true" />
+    <span className="typing-box">
+      <span className="typing-ghost" aria-hidden="true">{longest}</span>
+      <span className="typing-live">
+        {text}
+        <span className="typing-cursor" aria-hidden="true" />
+      </span>
     </span>
   );
 }

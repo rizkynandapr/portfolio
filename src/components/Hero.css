@@ -114,6 +114,7 @@
   position: absolute;
   inset: 0;
   cursor: grab;
+  touch-action: none; /* mobile: drag rotates the sphere, not the page */
 }
 .neural-scene:active { cursor: grabbing; }
 .neural-scene canvas { display: block; width: 100%; height: 100%; }
@@ -160,12 +161,22 @@
   .hero-scroll-cue { display: none; }
 }
 
-/* --- Typing text in the hero eyebrow --- */
-.hero-eyebrow {
-  min-width: 340px;
-  justify-content: flex-start;
+/* --- Typing text in the hero eyebrow ---
+   The ghost span (longest phrase, invisible) locks the pill's width and
+   height; the live text sits absolutely on top. The pill never resizes,
+   so the page below it never jumps. */
+.typing-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
-.typing-text {
+.typing-ghost {
+  visibility: hidden;
+  white-space: nowrap;
+}
+.typing-live {
+  position: absolute;
+  inset: 0;
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
@@ -187,8 +198,12 @@
   .typing-cursor { animation: none; opacity: 0; }
 }
 @media (max-width: 880px) {
-  .hero-eyebrow { min-width: 0; max-width: 100%; }
-  .typing-text { white-space: normal; }
+  .hero-eyebrow { min-width: 0; max-width: 100%; font-size: 11.5px; }
+}
+@media (max-width: 380px) {
+  /* ultra-narrow: allow the ghost to wrap — height is still reserved by
+     the ghost, so wrapping the live text can't move the layout */
+  .typing-ghost, .typing-live { white-space: normal; }
 }
 
 /* --- Hero metrics (social proof under the CTAs) --- */

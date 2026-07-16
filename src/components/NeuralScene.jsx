@@ -2,8 +2,10 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 // Interactive 3D constellation. Nodes fire in sequence like a pipeline
-// executing; user can drag to orbit. Falls back to a static frame when
-// prefers-reduced-motion is set.
+// executing. Drag to orbit with real inertia: grab is 1:1, release flings,
+// spin decays back to a slow idle drift. Hovering a node lights it up.
+// Pauses rendering entirely when the hero is off-screen or the tab is hidden.
+// Falls back to a static frame when prefers-reduced-motion is set.
 export default function NeuralScene() {
   const mountRef = useRef(null);
 
@@ -64,32 +66,75 @@ export default function NeuralScene() {
       });
     });
 
-    // --- pipeline pulse: nodes fire in sequence
+    // --- preallocated (never allocate inside the frame loop — GC hitches)
     const peri = new THREE.Color(0x7c8cff);
     const cyan = new THREE.Color(0x4fd1e0);
     const dim = new THREE.Color(0x5c6a94);
+    const SCALE_ONE = new THREE.Vector3(1, 1, 1);
+    const ndc = new THREE.Vector2(2, 2); // off-screen until first hover
+    const raycaster = new THREE.Raycaster();
+
     let pulseIndex = 0;
     let pulseTimer = 0;
+    let hovered = -1;
 
-    // --- drag to orbit
+    // --- orbit state: 1:1 grab, fling on release, decay to idle drift
+    const IDLE_SPIN = 0.12;      // rad/s baseline drift
+    const MAX_FLING = 3.2;       // rad/s cap on release velocity
+    let spinVel = IDLE_SPIN;     // current y-velocity (rad/s)
+    let tiltTarget = 0.18;       // desired x-rotation
+    group.rotation.x = tiltTarget;
     let dragging = false;
     let prevX = 0, prevY = 0;
-    let velX = 0.0022, velY = 0;
-    let rotX = 0.18;
+    let lastMoveT = 0;
+    let lastMoveVel = IDLE_SPIN;
 
-    const onDown = (e) => { dragging = true; prevX = e.clientX; prevY = e.clientY; };
+    const DRAG_SENS = 0.005;     // rad per px
+
+    const onDown = (e) => {
+      dragging = true;
+      prevX = e.clientX; prevY = e.clientY;
+      lastMoveT = performance.now();
+      lastMoveVel = 0;
+      renderer.domElement.setPointerCapture?.(e.pointerId);
+    };
+
     const onMove = (e) => {
+      // hover raycast coords (also while not dragging)
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
       if (!dragging) return;
-      velX = (e.clientX - prevX) * 0.00035 + 0.0008;
-      rotX += (e.clientY - prevY) * 0.003;
-      rotX = Math.max(-0.9, Math.min(0.9, rotX));
+      const now = performance.now();
+      const dx = e.clientX - prevX;
+      const dy = e.clientY - prevY;
+
+      // 1:1 grab — the sphere follows the pointer directly
+      group.rotation.y += dx * DRAG_SENS;
+      tiltTarget = Math.max(-0.9, Math.min(0.9, tiltTarget + dy * 0.004));
+
+      // track instantaneous velocity for the fling
+      const dtm = Math.max(8, now - lastMoveT) / 1000;
+      lastMoveVel = (dx * DRAG_SENS) / dtm;
+      lastMoveT = now;
       prevX = e.clientX; prevY = e.clientY;
     };
-    const onUp = () => { dragging = false; };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      // fling: inherit release velocity, capped; it decays back to idle in tick()
+      spinVel = Math.max(-MAX_FLING, Math.min(MAX_FLING, lastMoveVel));
+    };
+
+    const onLeave = () => { ndc.set(2, 2); };
 
     renderer.domElement.addEventListener('pointerdown', onDown);
-    window.addEventListener('pointermove', onMove);
+    renderer.domElement.addEventListener('pointermove', onMove);
+    renderer.domElement.addEventListener('pointerleave', onLeave);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
 
     const resize = () => {
       const w = mount.clientWidth;
@@ -103,52 +148,100 @@ export default function NeuralScene() {
     ro.observe(mount);
 
     const clock = new THREE.Clock();
-    let raf;
+    let raf = 0;
+    let running = false;
 
     const tick = () => {
-      const dt = clock.getDelta();
+      const dt = Math.min(clock.getDelta(), 0.05); // clamp: tab-switch spikes
 
-      group.rotation.y += dragging ? velX * 8 * dt * 60 * 0.016 : velX;
-      group.rotation.x += (rotX - group.rotation.x) * 0.06;
+      // --- rotation physics (frame-rate independent)
+      if (!dragging) {
+        // exponential decay of fling velocity back toward idle drift
+        spinVel += (IDLE_SPIN - spinVel) * (1 - Math.exp(-1.4 * dt));
+        group.rotation.y += spinVel * dt;
+      }
+      // tilt eases toward target with the same dt-based damping
+      group.rotation.x += (tiltTarget - group.rotation.x) * (1 - Math.exp(-8 * dt));
 
-      // sequential firing
+      // --- hover raycast (42 spheres — cheap)
+      raycaster.setFromCamera(ndc, camera);
+      const hit = raycaster.intersectObjects(nodes, false);
+      hovered = hit.length ? nodes.indexOf(hit[0].object) : -1;
+      renderer.domElement.style.cursor = dragging ? 'grabbing' : hovered >= 0 ? 'pointer' : 'grab';
+
+      // --- sequential firing
       pulseTimer += dt;
       if (pulseTimer > 0.22) {
         pulseTimer = 0;
         pulseIndex = (pulseIndex + 1) % NODE_COUNT;
       }
 
-      nodes.forEach((n, i) => {
+      const ease = 1 - Math.exp(-10 * dt);
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const n = nodes[i];
         const distFromPulse = (i - pulseIndex + NODE_COUNT) % NODE_COUNT;
-        if (distFromPulse === 0) {
+        if (i === hovered) {
+          n.material.color.copy(cyan);
+          n.scale.setScalar(2.5);
+        } else if (distFromPulse === 0) {
           n.material.color.copy(cyan);
           n.scale.setScalar(2.1);
         } else if (distFromPulse === 1 || distFromPulse === 2) {
           n.material.color.copy(peri);
           n.scale.setScalar(1.45);
         } else {
-          n.material.color.lerp(dim, 0.08);
-          n.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+          n.material.color.lerp(dim, ease);
+          n.scale.lerp(SCALE_ONE, ease);
         }
-      });
+      }
 
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
 
+    const start = () => {
+      if (running || prefersReduced) return;
+      running = true;
+      clock.getDelta(); // swallow the pause gap so dt doesn't spike
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    // Pause when the hero scrolls out of view — no reason to burn the main
+    // thread rendering a sphere nobody can see (it was contributing to
+    // scroll jank further down the page).
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) start();
+        else stop();
+      },
+      { threshold: 0.01 }
+    );
+    io.observe(mount);
+
+    const onVis = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    document.addEventListener('visibilitychange', onVis);
+
     if (prefersReduced) {
-      // single static frame
-      renderer.render(scene, camera);
-    } else {
-      tick();
+      renderer.render(scene, camera); // single static frame
     }
 
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
+      io.disconnect();
       ro.disconnect();
+      document.removeEventListener('visibilitychange', onVis);
       renderer.domElement.removeEventListener('pointerdown', onDown);
-      window.removeEventListener('pointermove', onMove);
+      renderer.domElement.removeEventListener('pointermove', onMove);
+      renderer.domElement.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       nodes.forEach((n) => { n.geometry.dispose(); n.material.dispose(); });
       edges.forEach(({ line }) => { line.geometry.dispose(); });
       lineMat.dispose();
