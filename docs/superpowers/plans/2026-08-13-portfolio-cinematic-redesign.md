@@ -18,7 +18,7 @@
 - `color-scheme: light only`. No dark mode. The Contact chapter is the only `--press` surface.
 - Base CSS state shows all content. JavaScript only adds dimming and scrub. The site must be fully readable with JS disabled.
 - `prefers-reduced-motion: reduce` drops pinning entirely and renders every flow as a complete static diagram with all node text visible.
-- Animate only `transform` and `opacity`.
+- Never animate a property that triggers layout (width, height, top, left, margin, padding). `transform`, `opacity`, and cheap paint properties (`fill`, `stroke`, `color`) are all permitted.
 - Mobile breakpoint is `768px`. Below it, no pinning and no scrub.
 - `three` must not appear in the production bundle.
 - Copy is never rewritten. Move it verbatim.
