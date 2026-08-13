@@ -33,3 +33,4 @@
   color: var(--paper);
   --rule: rgba(242, 241, 237, .16);
 }
+.chapter-dark .chapter-mark::before { background: var(--paper); }
