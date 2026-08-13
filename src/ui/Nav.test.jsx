@@ -12,7 +12,7 @@ describe('Nav', () => {
 
   it('offers the CV as a download', () => {
     render(<Nav />);
-    const cv = screen.getByRole('link', { name: /cv/i });
+    const cv = screen.getByRole('link', { name: 'CV ↓' });
     expect(cv).toHaveAttribute('href', '/Rizky-Nanda-Praditia-CV.pdf');
     expect(cv).toHaveAttribute('download');
   });
