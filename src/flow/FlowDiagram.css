@@ -37,6 +37,13 @@
   white-space: nowrap;
   transition: opacity .45s var(--ease), color .3s var(--ease);
 }
+/* Past the column's midpoint a label runs toward the prose column instead
+   of away from it — flip it to sit left of its dot, right-aligned, so it
+   never overflows past the diagram's own rule. */
+.flow-label[data-side='right'] {
+  transform: translate(-14px, -50%) translateX(-100%);
+  text-align: right;
+}
 .flow-label[data-state='dim']    { opacity: var(--dim); }
 .flow-label[data-state='active'] { opacity: 1; font-weight: 500; }
 .flow-label[data-state='flag']   { opacity: 1; font-weight: 500; color: var(--flag); }

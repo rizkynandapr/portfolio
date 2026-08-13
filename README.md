@@ -10,7 +10,7 @@ composition per project so the four never feel like the same effect repeated.
 ## Stack
 
 React 19 · Vite 8 · GSAP ScrollTrigger (pinning and scrub) · Lenis (smooth
-scroll) · Framer Motion · self-hosted Newsreader / IBM Plex Sans / IBM Plex Mono
+scroll) · self-hosted Newsreader / IBM Plex Sans / IBM Plex Mono
 
 ## Commands
 

@@ -20,7 +20,8 @@ export default function useChapter({ ref, steps, enabled }) {
     const trigger = ScrollTrigger.create({
       trigger: ref.current,
       start: 'top top',
-      end: `+=${slots * window.innerHeight}`,
+      end: () => `+=${slots * window.innerHeight}`,
+      invalidateOnRefresh: true,
       pin: true,
       pinSpacing: true,
       scrub: true,

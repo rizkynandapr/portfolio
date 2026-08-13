@@ -46,6 +46,13 @@ export default function FlowChapter({ project }) {
             <p className="flow-chapter-flowlabel mono">{project.flowLabel}</p>
           </header>
 
+          <div className="flow-chapter-prose">
+            <p className="mono flow-chapter-eyebrow">The problem</p>
+            <p className="flow-chapter-body">{project.problem}</p>
+            <p className="mono flow-chapter-eyebrow">What I built</p>
+            <p className="flow-chapter-body">{project.build}</p>
+          </div>
+
           {mobile ? (
             <FlowStepper project={project} />
           ) : (

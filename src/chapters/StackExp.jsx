@@ -1,6 +1,6 @@
 import './chapters.css';
 
-// ROLES  — verbatim from src/components/Experience.jsx:4-37
+// ROLES — carried over verbatim from the old Experience component.
 const ROLES = [
   {
     org: 'Aksoro',
@@ -36,7 +36,7 @@ const ROLES = [
   },
 ];
 
-// GROUPS — verbatim from src/components/Stack.jsx:5-18
+// GROUPS — carried over verbatim from the old Stack component.
 const GROUPS = [
   {
     label: 'AI / LLM',

@@ -22,8 +22,13 @@
 
 .flow-chapter-head h2 { font-size: clamp(34px, 4vw, 54px); }
 .flow-chapter-tag { font-size: 15px; opacity: .7; margin-top: 6px; }
-.flow-chapter-period { opacity: .45; margin-top: 10px; }
+.flow-chapter-period { opacity: .62; margin-top: 10px; }
 .flow-chapter-flowlabel { opacity: .55; margin-top: 26px; }
+
+.flow-chapter-prose { margin-top: 22px; display: grid; gap: 6px; }
+.flow-chapter-eyebrow { opacity: .62; margin-top: 16px; }
+.flow-chapter-eyebrow:first-child { margin-top: 0; }
+.flow-chapter-body { font-size: 14.5px; line-height: 1.65; max-width: 46ch; }
 
 .flow-panes { list-style: none; margin: 18px 0 0; padding: 0; position: relative; min-height: 40svh; }
 
@@ -42,12 +47,11 @@
 .flow-pane[data-state='flag'] .flow-pane-title,
 .flow-pane[data-state='flag'] .flow-pane-counter { color: var(--flag); opacity: 1; }
 
-.flow-pane-counter { opacity: .42; }
+.flow-pane-counter { opacity: .62; }
 .flow-pane-title { font-size: clamp(22px, 2.4vw, 32px); margin-top: 10px; }
 .flow-pane-detail { font-size: 14.5px; line-height: 1.65; margin-top: 10px; max-width: 46ch; }
 
 .flow-chapter-stack { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 0; padding: 0; }
-.flow-chip { border: 1px solid var(--rule); padding: 5px 11px; }
 
 .flow-chapter-links { display: flex; gap: 18px; margin-top: 20px; }
 .flow-chapter-links a { border-bottom: 1px solid var(--rule); padding-bottom: 3px; }

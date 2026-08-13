@@ -10,6 +10,8 @@ const PROJECT = {
   name: 'LegalitasAI',
   tag: 'RAG with a Citation Guardrail',
   period: '2026 · Open source',
+  problem: 'A lawyer is expensive, and a normal LLM gives a confident answer that is sometimes wrong.',
+  build: 'A RAG assistant that is not allowed to answer without proof, moving revoked-doc filtering into ranking took Hit Rate@5 from 63.6% to 81.8%.',
   composition: 'vertical',
   flowLabel: 'One question, end to end',
   flagIndex: 1,
@@ -44,6 +46,14 @@ describe('FlowChapter', () => {
     for (const n of PROJECT.flow) {
       expect(screen.getByText(n.detail)).toBeInTheDocument();
     }
+  });
+
+  it('renders the author\'s problem and build prose verbatim', () => {
+    render(<FlowChapter project={PROJECT} />);
+    expect(screen.getByText(PROJECT.problem)).toBeInTheDocument();
+    expect(screen.getByText(PROJECT.build)).toBeInTheDocument();
+    expect(screen.getByText('The problem')).toBeInTheDocument();
+    expect(screen.getByText('What I built')).toBeInTheDocument();
   });
 
   it('renders every stack chip', () => {

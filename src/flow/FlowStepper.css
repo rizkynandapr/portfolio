@@ -11,7 +11,7 @@
 .flow-stepper-pane[data-state='flag'] { border-left: 2px solid var(--flag); padding-left: 14px; }
 .flow-stepper-pane[data-state='flag'] .flow-stepper-title { color: var(--flag); }
 
-.flow-stepper-counter { opacity: .45; }
+.flow-stepper-counter { opacity: .62; }
 .flow-stepper-title { font-size: 22px; margin-top: 8px; }
 .flow-stepper-detail { font-size: 14px; line-height: 1.6; margin-top: 8px; }
 
