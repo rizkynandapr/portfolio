@@ -13,6 +13,17 @@ const PROJECT = {
   ],
 };
 
+const FLAGGED_PROJECT = {
+  id: '01',
+  name: 'LegalitasAI',
+  flagIndex: 1,
+  flow: [
+    { label: 'PDF Peraturan', detail: 'Regulations come as scanned PDFs.' },
+    { label: 'Citation Validator', detail: 'Every citation gets checked.' },
+    { label: 'Answer + Sources', detail: 'What ships is the answer.' },
+  ],
+};
+
 describe('FlowStepper', () => {
   it('starts on the first node', () => {
     const { container } = render(<FlowStepper project={PROJECT} />);
@@ -40,5 +51,27 @@ describe('FlowStepper', () => {
     for (const n of PROJECT.flow) {
       expect(screen.getByText(n.detail)).toBeInTheDocument();
     }
+  });
+
+  it('marks the flagged node as flag once it becomes the current step', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<FlowStepper project={FLAGGED_PROJECT} />);
+    await user.click(screen.getByRole('button', { name: /next node/i }));
+    expect(container.querySelector(`[data-pane="${FLAGGED_PROJECT.flagIndex}"]`)).toHaveAttribute('data-state', 'flag');
+  });
+
+  it('dims the flagged node (does not flag it) while it is not the current step', () => {
+    const { container } = render(<FlowStepper project={FLAGGED_PROJECT} />);
+    const flagPane = container.querySelector(`[data-pane="${FLAGGED_PROJECT.flagIndex}"]`);
+    expect(flagPane).toHaveAttribute('data-state', 'dim');
+    expect(flagPane).not.toHaveAttribute('data-state', 'flag');
+  });
+
+  it('renders no flag pane for a project with no flagIndex, at any step', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<FlowStepper project={PROJECT} />);
+    expect(container.querySelector('[data-state="flag"]')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /next node/i }));
+    expect(container.querySelector('[data-state="flag"]')).not.toBeInTheDocument();
   });
 });

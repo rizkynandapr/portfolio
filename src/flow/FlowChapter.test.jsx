@@ -81,4 +81,31 @@ describe('FlowChapter', () => {
     const { container } = render(<FlowChapter project={PROJECT} />);
     expect(container.querySelector('.flow-chapter')).toHaveClass('is-static');
   });
+
+  it('renders the desktop pane list (not the stepper) when the viewport does not match the mobile query', () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = (q) => ({
+      matches: false, media: q, onchange: null,
+      addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
+    });
+    const { container } = render(<FlowChapter project={PROJECT} />);
+    expect(container.querySelector('.flow-panes')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /next node/i })).not.toBeInTheDocument();
+    window.matchMedia = originalMatchMedia;
+  });
+
+  it('renders the stepper (not the desktop pane list) when the mobile media query matches', () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = (q) => ({
+      matches: q === '(max-width: 768px)', media: q, onchange: null,
+      addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
+    });
+    render(<FlowChapter project={PROJECT} />);
+    expect(screen.getByRole('button', { name: /next node/i })).toBeInTheDocument();
+    expect(document.querySelector('.flow-panes')).not.toBeInTheDocument();
+    for (const n of PROJECT.flow) {
+      expect(screen.getByText(n.detail)).toBeInTheDocument();
+    }
+    window.matchMedia = originalMatchMedia;
+  });
 });
