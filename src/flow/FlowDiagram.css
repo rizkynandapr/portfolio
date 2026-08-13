@@ -1,0 +1,46 @@
+.flow-diagram { position: relative; width: 100%; height: 100%; }
+
+.flow-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.flow-edge {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: .32;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The Citation Validator's outgoing edge never closes — the system refuses. */
+.flow-edge[data-broken='true'] {
+  stroke: var(--flag);
+  stroke-dasharray: 3 7;
+  opacity: .85;
+}
+
+.flow-dot {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: fill .3s var(--ease), stroke .3s var(--ease);
+}
+.flow-dot[data-state='active'] { fill: var(--ink); }
+.flow-dot[data-state='flag']   { fill: var(--flag); stroke: var(--flag); }
+
+.flow-labels { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+
+.flow-label {
+  position: absolute;
+  left: var(--nx);
+  top: var(--ny);
+  transform: translate(14px, -50%);
+  white-space: nowrap;
+  transition: opacity .45s var(--ease), color .3s var(--ease);
+}
+.flow-label[data-state='dim']    { opacity: var(--dim); }
+.flow-label[data-state='active'] { opacity: 1; font-weight: 500; }
+.flow-label[data-state='flag']   { opacity: 1; font-weight: 500; color: var(--flag); }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-label[data-state='dim'] { opacity: 1; }
+}
