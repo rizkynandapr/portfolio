@@ -1,8 +1,11 @@
 import { PAD } from './constants.js';
 
 // ApplyIQ — the flow splits into genuine parallel work, then rejoins.
-// First and last nodes sit alone on the spine; middle nodes pair into rows,
-// two abreast, so a row's two nodes share a y and read as concurrent.
+// First and last nodes sit alone on the spine; middle nodes alternate between
+// a left and a right track. The right track is offset half a row so the two
+// tracks interleave rather than sitting level: level pairs collide their
+// labels in a column this narrow. Two sustained columns is what reads as
+// parallel here, not two dots at matching heights.
 export default function branching(nodes, viewport) {
   const last = nodes.length - 1;
   const cx = viewport.width / 2;
@@ -28,10 +31,11 @@ export default function branching(nodes, viewport) {
     if (i === last) return { ...n, x: cx, y: PAD + span, edge: 'merge' };
 
     const m = i - 1;
+    const onRightTrack = m % 2 === 1;
     return {
       ...n,
-      x: cx + (m % 2 === 0 ? -spread : spread),
-      y: PAD + (Math.floor(m / 2) + 1) * step,
+      x: cx + (onRightTrack ? spread : -spread),
+      y: PAD + (Math.floor(m / 2) + 1) * step + (onRightTrack ? step * 0.45 : 0),
       edge: m === 0 ? 'fork' : 'straight',
     };
   });

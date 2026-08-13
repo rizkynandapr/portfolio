@@ -101,11 +101,21 @@ describe('layout shape and edge semantics', () => {
   });
 
   describe('branching', () => {
-    it('at least one pair of nodes shares a y (genuine parallelism)', () => {
+    // Two sustained columns is what reads as parallel in a narrow diagram
+    // column; level pairs would collide their labels, so the tracks interleave.
+    it('middle nodes occupy exactly two tracks either side of the spine', () => {
       const out = LAYOUTS.branching(NODES, VIEWPORT);
-      const counts = new Map();
-      for (const p of out) counts.set(p.y, (counts.get(p.y) ?? 0) + 1);
-      expect([...counts.values()].some((c) => c > 1)).toBe(true);
+      const spineX = out[0].x;
+      const middleX = new Set(out.slice(1, -1).map((p) => p.x));
+      expect(middleX.size).toBe(2);
+      const [a, b] = [...middleX];
+      expect(Math.min(a, b)).toBeLessThan(spineX);
+      expect(Math.max(a, b)).toBeGreaterThan(spineX);
+    });
+
+    it('gives every node its own row so labels never collide', () => {
+      const out = LAYOUTS.branching(NODES, VIEWPORT);
+      expect(new Set(out.map((p) => p.y)).size).toBe(out.length);
     });
 
     it('first and last nodes share the spine x; no middle node sits on it', () => {
@@ -127,10 +137,19 @@ describe('layout shape and edge semantics', () => {
   describe('convergent', () => {
     // Two inputs sit side by side at the top, then the merged chain runs down
     // the centre — descending, so the chain's labels clear each other.
-    it('the first two nodes share y and differ in x (the inputs)', () => {
+    // The inputs occupy their own columns AND their own rows: same-row inputs
+    // collide their labels in a column this narrow.
+    it('the first two nodes differ in both x and y (the inputs)', () => {
       const out = LAYOUTS.convergent(NODES, VIEWPORT);
-      expect(out[0].y).toBe(out[1].y);
       expect(out[0].x).not.toBe(out[1].x);
+      expect(out[0].y).not.toBe(out[1].y);
+    });
+
+    it('both inputs sit above the whole chain', () => {
+      const out = LAYOUTS.convergent(NODES, VIEWPORT);
+      const chainTop = Math.min(...out.slice(2).map((p) => p.y));
+      expect(out[0].y).toBeLessThan(chainTop);
+      expect(out[1].y).toBeLessThan(chainTop);
     });
 
     it('every node from index 2 on shares the same x (the chain)', () => {
