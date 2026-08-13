@@ -1,3 +1,4 @@
+import nodeState from './nodeState.js';
 import './FlowDiagram.css';
 
 // Renders positioned nodes as ink line-work: a hairline SVG spine with
@@ -35,7 +36,7 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
             cy={p.y}
             r="5"
             data-dot={i}
-            data-state={stateOf(i, activeIndex, flagIndex)}
+            data-state={nodeState(i, activeIndex, flagIndex)}
           />
         ))}
       </svg>
@@ -45,7 +46,7 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
           <li
             key={p.label}
             data-node={i}
-            data-state={stateOf(i, activeIndex, flagIndex)}
+            data-state={nodeState(i, activeIndex, flagIndex)}
             className="flow-label mono"
             style={{ '--nx': `${(p.x / viewport.width) * 100}%`, '--ny': `${(p.y / viewport.height) * 100}%` }}
           >
@@ -55,11 +56,6 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
       </ul>
     </div>
   );
-}
-
-function stateOf(i, activeIndex, flagIndex) {
-  if (i !== activeIndex) return 'dim';
-  return i === flagIndex ? 'flag' : 'active';
 }
 
 // A right-angle elbow for forks and merges, a straight line otherwise.

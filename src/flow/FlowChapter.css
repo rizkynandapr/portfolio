@@ -9,6 +9,7 @@
   position: relative;
   border-right: 1px solid var(--rule);
   padding-right: 28px;
+  aspect-ratio: 520 / 760;
 }
 
 .flow-chapter-copy {
@@ -24,11 +25,13 @@
 .flow-chapter-period { opacity: .45; margin-top: 10px; }
 .flow-chapter-flowlabel { opacity: .55; margin-top: 26px; }
 
-.flow-panes { list-style: none; margin: 18px 0 0; padding: 0; position: relative; }
+.flow-panes { list-style: none; margin: 18px 0 0; padding: 0; position: relative; min-height: 40svh; }
 
 /* Panes stack in one place; only the active one is legible. Base state is
    visible — the dimming below is the only thing JS-driven state adds. */
 .flow-pane {
+  position: absolute;
+  inset: 0;
   transition: opacity .45s var(--ease);
   padding: 12px 0;
 }
@@ -49,10 +52,13 @@
 
 /* Reduced motion: every pane readable at once, no pinning, no stacking. */
 .flow-chapter.is-static .flow-pane[data-state='dim'] { opacity: 1; }
-.flow-chapter.is-static .flow-panes { display: grid; gap: 22px; }
+.flow-chapter.is-static .flow-panes { display: grid; gap: 22px; min-height: 0; }
+.flow-chapter.is-static .flow-pane { position: static; }
 
 @media (max-width: 768px) {
   .flow-chapter-grid { grid-template-columns: 1fr; }
   .flow-chapter-diagram { display: none; }
   .flow-chapter-copy { padding-left: 0; }
+  .flow-pane { position: static; }
+  .flow-panes { min-height: 0; }
 }

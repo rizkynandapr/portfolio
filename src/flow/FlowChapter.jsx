@@ -3,6 +3,7 @@ import { LAYOUTS } from './layouts/index.js';
 import FlowDiagram from './FlowDiagram.jsx';
 import useChapter from '../stage/useChapter.js';
 import useReducedMotion from '../stage/useReducedMotion.js';
+import nodeState from './nodeState.js';
 import './FlowChapter.css';
 
 const VIEWPORT = { width: 520, height: 760 };
@@ -47,7 +48,7 @@ export default function FlowChapter({ project }) {
               <li
                 key={n.label}
                 data-pane={i}
-                data-state={paneState(i, active, project.flagIndex)}
+                data-state={nodeState(i, active, project.flagIndex)}
                 className="flow-pane"
               >
                 <p className="flow-pane-counter mono">
@@ -77,9 +78,4 @@ export default function FlowChapter({ project }) {
       </div>
     </section>
   );
-}
-
-function paneState(i, active, flagIndex) {
-  if (i !== active) return 'dim';
-  return i === flagIndex ? 'flag' : 'active';
 }
