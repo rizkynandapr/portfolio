@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 // Momentum-based smooth scrolling (Lenis), synced with GSAP's ScrollTrigger
 // so scroll-reveal animations still fire at the right positions.
 // Respects prefers-reduced-motion by bailing out entirely.
-export function useSmoothScroll() {
+export default function useSmoothScroll() {
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) return;

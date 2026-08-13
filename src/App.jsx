@@ -1,26 +1,33 @@
-import Nav from './components/Nav';
-import Hero from './components/Hero';
-import About from './components/About';
-import Projects from './components/Projects';
-import Experience from './components/Experience';
-import Stack from './components/Stack';
-import Contact from './components/Contact';
-import { useSmoothScroll } from './hooks/useSmoothScroll';
+import PROJECTS from './data/projects.js';
+import Stage from './stage/Stage.jsx';
+import useSmoothScroll from './stage/useSmoothScroll.js';
+import Nav from './ui/Nav.jsx';
+import Opening from './chapters/Opening.jsx';
+import Premise from './chapters/Premise.jsx';
+import Compact from './chapters/Compact.jsx';
+import StackExp from './chapters/StackExp.jsx';
+import About from './chapters/About.jsx';
+import Contact from './chapters/Contact.jsx';
+import FlowChapter from './flow/FlowChapter.jsx';
 
-function App() {
+const flowProjects = PROJECTS.filter((p) => p.flow);
+const compactProjects = PROJECTS.filter((p) => !p.flow);
+
+export default function App() {
   useSmoothScroll();
 
   return (
-    <div id="top">
+    <>
       <Nav />
-      <Hero />
-      <About />
-      <Projects />
-      <Experience />
-      <Stack />
-      <Contact />
-    </div>
+      <Stage>
+        <Opening />
+        <Premise />
+        {flowProjects.map((p) => <FlowChapter key={p.id} project={p} />)}
+        {compactProjects.map((p) => <Compact key={p.id} project={p} />)}
+        <StackExp />
+        <About />
+        <Contact />
+      </Stage>
+    </>
   );
 }
-
-export default App;
