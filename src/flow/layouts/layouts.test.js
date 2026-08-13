@@ -70,10 +70,26 @@ describe('layout shape and edge semantics', () => {
   });
 
   describe('horizontal', () => {
-    it('every node shares the same y', () => {
+    // The column is tall and narrow, so the traverse descends as it crosses —
+    // otherwise nine labels land on one line and overlap into a smear.
+    it('travels strictly left to right', () => {
       const out = LAYOUTS.horizontal(NODES, VIEWPORT);
-      const ys = new Set(out.map((p) => p.y));
-      expect(ys.size).toBe(1);
+      for (let i = 1; i < out.length; i++) {
+        expect(out[i].x).toBeGreaterThan(out[i - 1].x);
+      }
+    });
+
+    it('descends strictly, so no two labels share a line', () => {
+      const out = LAYOUTS.horizontal(NODES, VIEWPORT);
+      for (let i = 1; i < out.length; i++) {
+        expect(out[i].y).toBeGreaterThan(out[i - 1].y);
+      }
+    });
+
+    it('spans the full width, unlike the single-column vertical drop', () => {
+      const out = LAYOUTS.horizontal(NODES, VIEWPORT);
+      const xs = out.map((p) => p.x);
+      expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(VIEWPORT.width / 2);
     });
 
     it('every edge after index 0 is straight', () => {
@@ -109,17 +125,30 @@ describe('layout shape and edge semantics', () => {
   });
 
   describe('convergent', () => {
-    it('the first two nodes share x and differ in y (the inputs)', () => {
+    // Two inputs sit side by side at the top, then the merged chain runs down
+    // the centre — descending, so the chain's labels clear each other.
+    it('the first two nodes share y and differ in x (the inputs)', () => {
       const out = LAYOUTS.convergent(NODES, VIEWPORT);
-      expect(out[0].x).toBe(out[1].x);
-      expect(out[0].y).not.toBe(out[1].y);
+      expect(out[0].y).toBe(out[1].y);
+      expect(out[0].x).not.toBe(out[1].x);
     });
 
-    it('every node from index 2 on shares the same y (the chain)', () => {
+    it('every node from index 2 on shares the same x (the chain)', () => {
       const out = LAYOUTS.convergent(NODES, VIEWPORT);
-      const chainY = out[2].y;
+      const chainX = out[2].x;
       for (const p of out.slice(2)) {
-        expect(p.y).toBe(chainY);
+        expect(p.x).toBe(chainX);
+      }
+    });
+
+    it('the chain descends and never sits on an input row', () => {
+      const out = LAYOUTS.convergent(NODES, VIEWPORT);
+      const inputY = out[0].y;
+      for (let i = 3; i < out.length; i++) {
+        expect(out[i].y).toBeGreaterThan(out[i - 1].y);
+      }
+      for (const p of out.slice(2)) {
+        expect(p.y).toBeGreaterThan(inputY);
       }
     });
 

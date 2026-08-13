@@ -27,15 +27,17 @@
 
 .flow-panes { list-style: none; margin: 18px 0 0; padding: 0; position: relative; min-height: 40svh; }
 
-/* Panes stack in one place; only the active one is legible. Base state is
-   visible — the dimming below is the only thing JS-driven state adds. */
+/* Panes share one box, so only the active one may be painted — a dimmed pane
+   sitting on top of the active one makes both unreadable. Stacked panes go to
+   zero; --dim is for the diagram labels, which do not overlap. Text stays in
+   the DOM at opacity 0, so screen readers still reach every node. */
 .flow-pane {
   position: absolute;
   inset: 0;
   transition: opacity .45s var(--ease);
   padding: 12px 0;
 }
-.flow-pane[data-state='dim'] { opacity: var(--dim); }
+.flow-pane[data-state='dim'] { opacity: 0; pointer-events: none; }
 .flow-pane[data-state='flag'] { border-left: 2px solid var(--flag); padding-left: 16px; }
 .flow-pane[data-state='flag'] .flow-pane-title,
 .flow-pane[data-state='flag'] .flow-pane-counter { color: var(--flag); opacity: 1; }

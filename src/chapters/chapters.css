@@ -1,11 +1,11 @@
 /* Scroll allocation per spec §4. Non-flow chapters earn their screens by
    height; flow chapters get theirs from useChapter's pinned timeline. */
-.chapter-opening  { min-height: 200svh; }
-.chapter-premise  { min-height: 300svh; }
-.chapter-compact  { min-height: 200svh; }
-.chapter-stackexp { min-height: 400svh; }
-.chapter-about    { min-height: 300svh; }
-.chapter-contact  { min-height: 300svh; }
+.chapter-opening  { min-height: 130svh; }
+.chapter-premise  { min-height: 160svh; }
+.chapter-compact  { min-height: 140svh; }
+.chapter-stackexp { min-height: 200svh; }
+.chapter-about    { min-height: 150svh; }
+.chapter-contact  { min-height: 120svh; }
 
 .opening-title { font-size: clamp(44px, 8vw, 104px); }
 .opening-sub { margin-top: 30px; max-width: 52ch; font-size: 16px; line-height: 1.7; opacity: .8; }
