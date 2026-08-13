@@ -4,6 +4,8 @@ import FlowDiagram from './FlowDiagram.jsx';
 import useChapter from '../stage/useChapter.js';
 import useReducedMotion from '../stage/useReducedMotion.js';
 import nodeState from './nodeState.js';
+import FlowStepper from './FlowStepper.jsx';
+import useIsMobile from '../stage/useIsMobile.js';
 import './FlowChapter.css';
 
 const VIEWPORT = { width: 520, height: 760 };
@@ -11,8 +13,9 @@ const VIEWPORT = { width: 520, height: 760 };
 export default function FlowChapter({ project }) {
   const ref = useRef(null);
   const reduced = useReducedMotion();
+  const mobile = useIsMobile();
   const steps = project.flow.length;
-  const active = useChapter({ ref, steps, enabled: !reduced });
+  const active = useChapter({ ref, steps, enabled: !reduced && !mobile });
 
   const layout = LAYOUTS[project.composition];
   const positions = layout(project.flow, VIEWPORT);
@@ -43,22 +46,26 @@ export default function FlowChapter({ project }) {
             <p className="flow-chapter-flowlabel mono">{project.flowLabel}</p>
           </header>
 
-          <ol className="flow-panes">
-            {project.flow.map((n, i) => (
-              <li
-                key={n.label}
-                data-pane={i}
-                data-state={nodeState(i, active, project.flagIndex)}
-                className="flow-pane"
-              >
-                <p className="flow-pane-counter mono">
-                  Node {String(i + 1).padStart(2, '0')} / {String(steps).padStart(2, '0')}
-                </p>
-                <h3 className="flow-pane-title">{n.label}</h3>
-                <p className="flow-pane-detail">{n.detail}</p>
-              </li>
-            ))}
-          </ol>
+          {mobile ? (
+            <FlowStepper project={project} />
+          ) : (
+            <ol className="flow-panes">
+              {project.flow.map((n, i) => (
+                <li
+                  key={n.label}
+                  data-pane={i}
+                  data-state={nodeState(i, active, project.flagIndex)}
+                  className="flow-pane"
+                >
+                  <p className="flow-pane-counter mono">
+                    Node {String(i + 1).padStart(2, '0')} / {String(steps).padStart(2, '0')}
+                  </p>
+                  <h3 className="flow-pane-title">{n.label}</h3>
+                  <p className="flow-pane-detail">{n.detail}</p>
+                </li>
+              ))}
+            </ol>
+          )}
 
           <ul className="flow-chapter-stack">
             {project.stack.map((s) => (
