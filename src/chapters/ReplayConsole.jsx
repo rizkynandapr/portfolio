@@ -3,8 +3,8 @@ import useReducedMotion from '../stage/useReducedMotion.js';
 import './ReplayConsole.css';
 
 // A scripted replay of the WhatsApp agent's order path, using demo data.
-// It shows what the system does — webhook, history, structured model output,
-// order capture, owner alert — instead of describing it.
+// It shows what the system does, webhook, history, structured model output,
+// order capture, owner alert, instead of describing it.
 const SCRIPT = [
   { t: '09:41:02', tag: 'wa.in', kind: 'user', text: 'Kak, ponco hijau ukuran L masih ada?' },
   { t: '09:41:02', tag: 'n8n', kind: 'sys', text: 'webhook ok · history(6) loaded' },
@@ -25,7 +25,7 @@ export default function ReplayConsole() {
   const [onScreen, setOnScreen] = useState(true);
   const ref = useRef(null);
 
-  // Pause the replay when it is scrolled away — no timers ticking off-screen.
+  // Pause the replay when it is scrolled away, no timers ticking off-screen.
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined' || !ref.current) return undefined;
     const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));

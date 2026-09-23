@@ -7,11 +7,17 @@ import './Contact.css';
 export default function Contact() {
   return (
     <section id="contact" className="chapter contact" aria-label="Contact">
-      <SectionHead index="05" title="Open channel" meta="Replies within a day, UTC+7" />
+      <SectionHead index="05" title="Contact" meta="Email is fastest · UTC+7" />
 
       <h2 className="contact-title">
         Have a broken workflow or an idea worth <span className="contact-signal">automating?</span>
       </h2>
+
+      <p className="contact-lead">
+        Tell me what the workflow looks like today. A screenshot of a messy
+        spreadsheet is fine. I'll tell you straight whether it needs an agent
+        or just a simpler automation.
+      </p>
 
       <div className="contact-actions">
         <CopyEmail email={IDENTITY.email} />
@@ -30,7 +36,7 @@ export default function Contact() {
       <footer className="contact-foot mono">
         <span>© 2026 {IDENTITY.name}</span>
         <span>{IDENTITY.coords}</span>
-        <span>React · three.js · Vercel</span>
+        <span>Built with React, deployed on Vercel</span>
       </footer>
     </section>
   );

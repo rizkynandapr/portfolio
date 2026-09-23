@@ -6,8 +6,7 @@ lime **signal** for fills and "live" states, and an indigo **accent** as the
 second voice. Light and dark themes, following the system by default with a
 toggle in the nav.
 
-It opens with the interactive 3D constellation from the previous site, a
-telemetry strip where every number is backed by a project write-up, and an
+It opens with a portrait and a short pitch, a telemetry strip where every number is backed by a project write-up, and an
 index of every system on one screen. Each pipeline gets a trace that walks the
 real node graph on its own while it is on screen — no scroll pinning — and any
 node can be clicked to pause and read. The WhatsApp chapter adds a scripted
@@ -16,7 +15,7 @@ questions about the work, grounded only in this site's own data.
 
 ## Stack
 
-React 19 · Vite 8 · three.js (lazy-loaded) · Lenis · Vercel Functions (the agent)
+React 19 · Vite 8 · Lenis · Vercel Functions (the agent)
 · self-hosted Archivo (variable width) / Geist / Geist Mono
 
 ## Commands
@@ -39,7 +38,7 @@ api/
 src/
   data/projects.js     project content, flow graphs, headline metric per project
   data/profile.js      identity, telemetry, roles, stack — shared with the agent
-  chapters/            opening + 3D orb, replay, systems index, compact, stack/log, about, contact
+  chapters/            opening + portrait, replay, systems index, compact, stack, about (story + now card), contact
   flow/                auto-play trace: diagram, chapter, useAutoplay, mobile stepper, layouts/
   agent/               agent console UI and client
   stage/               scroll host, smooth scroll, motion preferences
@@ -82,18 +81,23 @@ of defence whatever the rate limiter does.
 
 ## Behaviour worth knowing
 
-- Traces only tick while at least a third of them is on screen; the 3D orb
-  stops rendering when off-screen or when the tab is hidden.
+- Traces only tick while at least a third of them is on screen.
 - **Below 768px** each pipeline becomes a tap-through stepper.
-- **`prefers-reduced-motion: reduce`** stops the traces, the replay and the orb,
+- **`prefers-reduced-motion: reduce`** stops the traces, the replay and the portrait scan line,
   and renders every pipeline as a complete static diagram.
 - Node text is always in the DOM; only `data-state` changes, so screen readers
   reach every node.
 - Theme choice is remembered in `localStorage` (best-effort); without it the
   site follows `prefers-color-scheme`.
 
+## Photo
+
+`public/img/` holds the portrait at 640 and 986 px (WebP) plus a JPEG
+fallback, served through `<picture>` with explicit width/height so the layout
+never jumps. To swap it, export new files at the same names.
+
 ## Editing content
 
-Numbers on the page come from `src/data/profile.js` (`TELEMETRY`) and each
+Numbers and the About copy come from `src/data/profile.js` (`TELEMETRY`, `NOW`, `STORY`, `PRINCIPLES`) and each
 project's `metric` in `src/data/projects.js`. The agent reads the same files,
 so updating them updates both.

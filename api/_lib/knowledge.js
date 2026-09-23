@@ -1,7 +1,7 @@
 // Builds the agent's system prompt from the same data the site renders, so
 // the agent can only say what the page already says.
 import PROJECTS from '../../src/data/projects.js';
-import { IDENTITY, LINKS, ROLES, STACK, EDUCATION, TELEMETRY } from '../../src/data/profile.js';
+import { IDENTITY, LINKS, ROLES, STACK, EDUCATION, TELEMETRY, NOW, STORY, PRINCIPLES } from '../../src/data/profile.js';
 
 function projectBlock(p) {
   const lines = [
@@ -31,6 +31,16 @@ export function buildKnowledge() {
     `Links: ${LINKS.map((l) => `${l.label} ${l.href}`).join(' · ')}`,
     `Education: ${EDUCATION.join('; ')}`,
     '',
+    '# Right now',
+    `${NOW.status}: ${NOW.detail}. Before: ${NOW.previous}. Base: ${NOW.base}.`,
+    'Availability for other work is not stated anywhere. For that, point to email.',
+    '',
+    '# His story, in his words',
+    STORY.join('\n\n'),
+    '',
+    '# How he works',
+    PRINCIPLES.map((p) => `- ${p.title}: ${p.body}`).join('\n'),
+    '',
     '# Headline numbers',
     TELEMETRY.map((t) => `- ${t.value} ${t.label} (${t.context})`).join('\n'),
     '',
@@ -53,6 +63,7 @@ export function buildSystemPrompt() {
 - Refer to him as "Rizky" in the third person. You are his agent, not him.
 - Reply in the visitor's language (Bahasa Indonesia or English), matching their register.
 - Keep answers under 120 words. Plain text only: no markdown headings, no bold, no tables. Short "- " lists are fine.
+- Sound like a person, not a brochure: short plain sentences, no em dashes, no hype words ("passionate", "cutting-edge", "leverage", "seamless", "testament").
 - When a project fits the question, name it and give its one most relevant concrete detail or number.
 - For hiring, collaboration or pricing questions: summarise the relevant experience, then point to ${IDENTITY.email}.
 - Stay on topic. If asked for unrelated work (write code, essays, homework, general chat), decline in one sentence and offer to talk about Rizky's work instead.

@@ -26,7 +26,7 @@ export const TELEMETRY = [
   { value: '98%', label: 'Model accuracy', context: 'LSTM · ~32k headlines' },
   { value: '43', label: 'Tests in CI', context: 'Eval-gated · 7 ADRs' },
   { value: '10', label: 'SMB clients shipped', context: 'WhatsApp · CRM · n8n' },
-  { value: '5', label: 'Systems, public code', context: 'All linked below' },
+  { value: '5', label: 'Systems with public code', context: 'Every repo linked below' },
 ];
 
 export const ROLES = [
@@ -42,7 +42,7 @@ export const ROLES = [
   {
     org: 'Aksoro',
     title: 'AI Trainer',
-    period: 'Jun 2026 — Sep 2026',
+    period: 'Jun – Sep 2026',
     location: 'Yogyakarta',
     points: [
       'Design, write, and debug system prompts for FAQ handling, lead qualification, and order tracking across client accounts',
@@ -54,7 +54,7 @@ export const ROLES = [
   {
     org: 'damirich.id',
     title: 'Database Administrator (Internship)',
-    period: 'Dec 2023 — May 2024',
+    period: 'Dec 2023 – May 2024',
     location: 'Yogyakarta',
     points: [
       'Managed and optimized the database architecture for a team-developed web application',
@@ -64,7 +64,7 @@ export const ROLES = [
   {
     org: 'Universitas Muhammadiyah Yogyakarta',
     title: 'Teaching Assistant, Database Implementation',
-    period: 'Sep 2022 — Jul 2023',
+    period: 'Sep 2022 – Jul 2023',
     location: 'Bantul',
     points: [
       'Supported 36 undergraduates through hands-on SQL and database design sessions',
@@ -81,6 +81,36 @@ export const STACK = [
 ];
 
 export const EDUCATION = [
-  'S.Kom, Informatics — Universitas Muhammadiyah Yogyakarta',
-  'Data Science Bootcamp — Hacktiv8',
+  'S.Kom in Informatics, Universitas Muhammadiyah Yogyakarta',
+  'Data Science Bootcamp, Hacktiv8',
+];
+
+// Where things stand right now. Shown in the About card and given to the agent.
+export const NOW = {
+  status: 'Joining Cekat.AI',
+  detail: 'IT Delivery team, starting 5 Oct 2026',
+  previous: 'AI Trainer at Aksoro, Jun – Sep 2026 (contract finished)',
+  base: 'Yogyakarta, heading to BSD in October',
+};
+
+// The About story, first person. Every fact here also appears elsewhere on the page.
+export const STORY = [
+  "I started on the database side. At UMY I was the teaching assistant for Database Implementation, which mostly meant debugging 36 students' SQL live and explaining why one query ran faster than another. After that came six months as a DBA intern at damirich.id, and then Hacktiv8's data science bootcamp. The first model I put online for anyone to try was a clickbait detector on Hugging Face.",
+  "Chat pulled me in after that. At Aksoro I wrote and debugged system prompts for client bots that handled FAQs, qualified leads and tracked orders. Most days I'm inside an n8n canvas or a prompt draft, waiting to see what breaks. Something always does. Usually it's one node with a typo in its name, or a prompt that reads fine to me and means something else to the model. Finding that gap is most of the job.",
+  "My Aksoro contract finished in September. On 5 October I join the IT Delivery team at Cekat.AI.",
+];
+
+export const PRINCIPLES = [
+  {
+    title: 'Prompts that hold up with real customers',
+    body: "When a bot gives a wrong answer, I trace it back to the prompt line or knowledge entry that caused it and fix that. At Aksoro that's how we cut down wrong-answer escalations.",
+  },
+  {
+    title: 'Built on the tools you already use',
+    body: 'WhatsApp Cloud API, Google Sheets, a CRM, Supabase. The business keeps its tools and the agent learns to work inside them, so nobody has to change how they run the shop.',
+  },
+  {
+    title: "Proof before anyone trusts it",
+    body: "LegalitasAI won't answer if it can't cite the Pasal. Its CI has an eval gate, and seven ADRs record what I tried, what I rejected, and why.",
+  },
 ];

@@ -3,7 +3,8 @@
 .contact-signal { color: var(--hl); }
 .contact-prompt { color: var(--hl); }
 
-.contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 44px; }
+.contact-lead { margin-top: 26px; max-width: 54ch; font-size: 18px; line-height: 1.7; color: var(--dim); }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .contact-links { list-style: none; display: flex; flex-wrap: wrap; gap: 24px; margin: 36px 0 0; padding: 0; }
 
 .contact-foot {

@@ -14,7 +14,7 @@ const VIEWPORT = { width: 520, height: 760 };
 const pad = (n) => String(n).padStart(2, '0');
 
 // One project: a brief (problem, build, stack) and a trace that walks the
-// real pipeline on its own. Nothing pins or hijacks scroll — the trace runs
+// real pipeline on its own. Nothing pins or hijacks scroll, the trace runs
 // while it is on screen and any node can be picked to pause and read.
 export default function FlowChapter({ project, index = 1 }) {
   const traceRef = useRef(null);

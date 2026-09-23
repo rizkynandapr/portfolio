@@ -8,13 +8,13 @@ const MAX_INPUT = 500;
 const MAX_TURNS = 12; // keep in step with the server's validation limit
 
 const SUGGESTIONS = [
-  'What is the strongest project here?',
+  'Which project should I look at first?',
   'How does the WhatsApp agent capture orders?',
   'Ceritain LegalitasAI dong',
-  'What has Rizky shipped with RAG?',
+  'What did Rizky do at Aksoro?',
 ];
 
-// Replies render as plain text nodes — never as HTML — so model output can't
+// Replies render as plain text nodes, never as HTML, so model output can't
 // inject markup into the page.
 export default function AgentConsole() {
   const [open, setOpen] = useState(false);
@@ -103,8 +103,8 @@ export default function AgentConsole() {
 
         <div ref={logRef} className="agent-log" data-lenis-prevent aria-live="polite">
           <p className="agent-msg" data-role="assistant">
-            Hi — I'm {IDENTITY.short}'s portfolio agent. Ask me about his projects,
-            stack or experience. English or Bahasa Indonesia both work.
+            Hi, I'm the agent on {IDENTITY.short}'s site. Ask about his projects,
+            his stack, or where he's worked. English or Bahasa Indonesia is fine.
           </p>
 
           {messages.length === 0 && (
@@ -144,7 +144,7 @@ export default function AgentConsole() {
           <button type="submit" className="agent-send mono" disabled={busy || !input.trim()}>Send</button>
         </form>
 
-        <p className="agent-note mono">AI answers from this site's content — can be wrong. Email for anything that matters.</p>
+        <p className="agent-note mono">Answers come from this site and can still be wrong. For anything important, email Rizky.</p>
       </section>
     </>
   );

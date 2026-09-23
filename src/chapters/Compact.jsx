@@ -1,7 +1,7 @@
 import SectionHead from '../ui/SectionHead.jsx';
 import './Compact.css';
 
-// A project with no pipeline to trace — one brief, one number.
+// A project with no pipeline to trace, one brief, one number.
 export default function Compact({ project, index = 1 }) {
   return (
     <section id={`work-${project.id}`} className="chapter compact" aria-labelledby={`work-${project.id}-title`}>

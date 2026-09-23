@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 // Reports which of the given section ids currently owns the middle band of
-// the viewport. IntersectionObserver only — no scroll listeners.
+// the viewport. IntersectionObserver only, no scroll listeners.
 export default function useScrollSpy(ids) {
   const [active, setActive] = useState(null);
   const key = ids.join('|');

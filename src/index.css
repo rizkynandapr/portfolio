@@ -33,11 +33,6 @@
   --shadow-1: none;
   --shadow-2: 0 24px 60px -24px rgba(0, 0, 0, .85);
 
-  /* Orb (three.js) reads these at runtime. */
-  --orb-pulse: #c4ee2f;
-  --orb-trail: #8f88ff;
-  --orb-node:  #3a4658;
-  --orb-edge:  #8f88ff;
 }
 
 :root[data-theme='light'] {
@@ -69,10 +64,6 @@
   --shadow-1: 0 1px 0 rgba(10, 15, 26, .04), 0 1px 2px rgba(10, 15, 26, .06);
   --shadow-2: 0 1px 0 rgba(10, 15, 26, .04), 0 18px 40px -16px rgba(10, 15, 26, .25);
 
-  --orb-pulse: #3a2ef0;
-  --orb-trail: #8fb31a;
-  --orb-node:  #aeb8c5;
-  --orb-edge:  #3a2ef0;
 }
 
 :root {

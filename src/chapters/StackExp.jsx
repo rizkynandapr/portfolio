@@ -5,7 +5,7 @@ import './StackExp.css';
 export default function StackExp() {
   return (
     <section id="stack" className="chapter stackexp" aria-label="Stack and mission log">
-      <SectionHead index="03" title="Stack & mission log" meta="Tools in daily use · where they ran" />
+      <SectionHead index="03" title="Stack & track record" meta="What I use, and where it ran" />
 
       <div className="stackexp-grid">
         <div>

@@ -40,7 +40,7 @@ describe('chapters', () => {
   it('Opening shows every telemetry figure with its context', () => {
     render(<Opening />);
     for (const t of TELEMETRY) {
-      expect(screen.getByText(t.value)).toBeInTheDocument();
+      expect(screen.getAllByText(t.value).length).toBeGreaterThan(0);
       expect(screen.getByText(t.context)).toBeInTheDocument();
     }
   });
@@ -68,9 +68,18 @@ describe('chapters', () => {
     expect(screen.getByText('Web & Infra')).toBeInTheDocument();
   });
 
-  it('About keeps the UTC+7 line', () => {
+  it('About tells the story and shows what is happening now', () => {
     render(<About />);
-    expect(screen.getByText(/UTC\+7/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('From SQL labs');
+    expect(screen.getByText('Joining Cekat.AI')).toBeInTheDocument();
+    expect(screen.getAllByText(/contract finished/).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3);
+  });
+
+  it('Opening shows the portrait with real alt text', () => {
+    render(<Opening />);
+    const img = screen.getByRole('img', { name: /Rizky Nanda Praditia/ });
+    expect(img).toHaveAttribute('src', '/img/rizky-986.jpg');
   });
 
   it('Contact exposes email, LinkedIn and GitHub', () => {
