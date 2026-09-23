@@ -8,13 +8,9 @@ import PROJECTS from './data/projects.js';
 // smoke test only needs the DOM tree, not the scroll behaviour.
 vi.mock('./stage/useSmoothScroll.js', () => ({ default: vi.fn() }));
 
-// useChapter creates a real GSAP ScrollTrigger when enabled (desktop +
-// motion allowed, which is the default here). ScrollTrigger.create() in
-// jsdom triggers "Not implemented: Window's scrollTo()" console noise from
-// jsdom itself. Mocked to always report the lead-in step (0), matching the
-// convention already used in FlowChapter.test.jsx, so no ScrollTrigger is
-// ever registered and the pristine-output requirement holds.
-vi.mock('./stage/useChapter.js', () => ({ default: vi.fn(() => 0) }));
+// useAutoplay observes intersection and runs timers; the smoke test only
+// needs the DOM tree, so it is pinned to node 0 and never ticks.
+vi.mock('./flow/useAutoplay.js', () => ({ default: vi.fn(() => ({ active: 0, select: () => {}, paused: false, running: false })) }));
 
 beforeEach(() => {
   // Desktop, motion-allowed viewport: matches:false for every media query.
@@ -83,12 +79,11 @@ describe('App — systems index', () => {
     }
   });
 
-  it('gives every flow chapter a skip link that resolves', () => {
+  it('gives every flow chapter a clickable node list', () => {
     const { container } = render(<App />);
-    const skips = container.querySelectorAll('.flow-trace-skip');
-    expect(skips.length).toBe(PROJECTS.filter((p) => p.flow).length);
-    for (const s of skips) {
-      expect(container.querySelector(s.getAttribute('href'))).not.toBeNull();
+    for (const p of PROJECTS.filter((x) => x.flow)) {
+      const nodes = container.querySelectorAll(`#work-${p.id} .flow-node`);
+      expect(nodes).toHaveLength(p.flow.length);
     }
   });
 });

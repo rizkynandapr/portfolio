@@ -3,12 +3,12 @@
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   gap: clamp(32px, 6vw, 96px);
 }
-.compact-num { color: var(--signal); margin-bottom: 14px; }
+.compact-num { color: var(--hl); margin-bottom: 14px; }
 .compact-title { font-size: clamp(34px, 4.4vw, 60px); font-stretch: 118%; font-weight: 800; letter-spacing: -.035em; }
 .compact-tag { margin-top: 12px; color: var(--dim); font-size: 17px; }
 .compact-period { margin-top: 12px; color: var(--faint); }
 
-.compact-metric { display: grid; gap: 6px; margin-top: 34px; padding-left: 18px; border-left: 2px solid var(--signal); }
+.compact-metric { display: grid; gap: 6px; margin-top: 34px; padding-left: 18px; border-left: 2px solid var(--hl); }
 .compact-metric-value { font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -.03em; }
 .compact-metric-label { color: var(--dim); }
 

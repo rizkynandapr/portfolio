@@ -13,8 +13,6 @@ import AgentConsole from './agent/AgentConsole.jsx';
 
 const flowProjects = PROJECTS.filter((p) => p.flow);
 const compactProjects = PROJECTS.filter((p) => !p.flow);
-const workOrder = [...flowProjects, ...compactProjects];
-const nextIdOf = (i) => (workOrder[i + 1] ? `work-${workOrder[i + 1].id}` : 'stack');
 
 export default function App() {
   useSmoothScroll();
@@ -27,7 +25,7 @@ export default function App() {
         <Opening />
         <SystemsIndex />
         {flowProjects.map((p, i) => (
-          <FlowChapter key={p.id} project={p} index={i + 1} nextId={nextIdOf(i)} />
+          <FlowChapter key={p.id} project={p} index={i + 1} />
         ))}
         {compactProjects.map((p, i) => (
           <Compact key={p.id} project={p} index={flowProjects.length + i + 1} />

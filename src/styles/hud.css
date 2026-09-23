@@ -1,65 +1,64 @@
-/* HUD primitives shared across chapters: brackets, buttons, chips, section heads. */
-
-/* Corner brackets. Drawn on a pseudo-element so the host keeps its own
-   background; eight 1px gradients make four L-shaped ticks. */
-.brackets { position: relative; }
-.brackets::before {
-  --c: var(--bracket, var(--line-2));
-  --s: 12px;
-  content: '';
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--c), var(--c)) top left     / var(--s) 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) top left     / 1px var(--s) no-repeat,
-    linear-gradient(var(--c), var(--c)) top right    / var(--s) 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) top right    / 1px var(--s) no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left  / var(--s) 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left  / 1px var(--s) no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / var(--s) 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / 1px var(--s) no-repeat;
-}
+/* Shared primitives: surfaces, buttons, chips, badges, section heads. */
 
 .panel {
-  background: color-mix(in srgb, var(--deck) 88%, transparent);
+  background: var(--deck);
   border: 1px solid var(--line);
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow-2);
 }
 
-/* Buttons: primary is the only filled signal surface on a screen. */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 13px 18px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  padding: 12px 18px;
+  min-height: 44px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  color: var(--text);
   border: 1px solid var(--line-2);
-  background: transparent;
+  border-radius: var(--r-m);
+  background: var(--deck);
+  box-shadow: var(--shadow-1);
   cursor: pointer;
-  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
 }
-.btn:hover { border-color: var(--text); }
+.btn:hover { border-color: var(--text); transform: translateY(-1px); }
 .btn-primary {
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   background: var(--signal);
   border-color: var(--signal);
   color: var(--signal-ink);
 }
-.btn-primary:hover { background: #d8ff75; border-color: #d8ff75; }
+.btn-primary:hover { background: var(--signal-hover); border-color: var(--signal-hover); }
 .btn svg { flex: none; }
 
 .chip {
   display: inline-block;
   padding: 5px 10px;
-  border: 1px solid var(--line-2);
-  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  background: var(--deck);
+  color: var(--text-2);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .06em;
+  font-size: 12px;
+}
+
+/* Lime badge with dark ink — the Fileloka "LOCAL-FIRST" chip. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: var(--r-s);
+  background: var(--signal);
+  color: var(--signal-ink);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .link-arrow {
@@ -71,34 +70,45 @@
   padding-bottom: 3px;
   transition: color .2s var(--ease), border-color .2s var(--ease);
 }
-.link-arrow:hover { color: var(--signal); border-color: var(--signal); }
+.link-arrow:hover { color: var(--accent); border-color: var(--accent); }
 
-/* Live indicator: a pulsing signal dot. */
+/* Live indicator dot. */
 .pulse {
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: var(--signal);
-  box-shadow: 0 0 0 0 rgba(198, 255, 61, .5);
+  background: var(--ok);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 50%, transparent);
   animation: pulse 2.2s var(--ease) infinite;
   flex: none;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(198, 255, 61, .55); }
-  70%  { box-shadow: 0 0 0 8px rgba(198, 255, 61, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(198, 255, 61, 0); }
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--ok) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 0%, transparent); }
 }
 
-/* Section head: [02] // TITLE ———————— meta */
+/* Section head: [01] SYSTEMS INDEX ———————— meta */
 .section-head {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
-  margin-bottom: clamp(36px, 5vw, 64px);
+  margin-bottom: clamp(32px, 4.5vw, 56px);
   color: var(--dim);
 }
-.section-head-index { color: var(--signal); }
-.section-head-rule { height: 1px; background: var(--line-2); }
+.section-head-index {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 22px;
+  padding: 0 6px;
+  margin-right: 10px;
+  border-radius: var(--r-s);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.section-head-rule { height: 1px; background: var(--line); }
 .section-head-meta { color: var(--faint); }
 
 @media (max-width: 640px) {
@@ -111,6 +121,7 @@
   top: 8px; left: 8px;
   z-index: 100;
   padding: 10px 14px;
+  border-radius: var(--r-m);
   background: var(--signal);
   color: var(--signal-ink);
   transform: translateY(-160%);

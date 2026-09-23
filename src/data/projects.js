@@ -70,6 +70,7 @@ const PROJECTS = [
     links: { code: 'https://github.com/rizkynandapr/n8n-whatsapp-ai-chatbot' },
     flow: WA_CHATBOT_FLOW,
     flowLabel: 'One message in, node by node',
+    showcase: 'replay',
     composition: 'horizontal',
   },
   {

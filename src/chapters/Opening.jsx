@@ -1,23 +1,26 @@
 import { IDENTITY, LINKS, TELEMETRY } from '../data/profile.js';
+import { lazy, Suspense } from 'react';
 import { openAgent } from '../agent/agentBus.js';
-import ReplayConsole from './ReplayConsole.jsx';
 import './Opening.css';
+
+// three.js is ~half the JS weight — load it after the page is interactive.
+const NeuralScene = lazy(() => import('./NeuralScene.jsx'));
+
+const PROOF = ['WhatsApp agents', 'RAG with guardrails', 'n8n pipelines'];
 
 export default function Opening() {
   return (
     <section id="top" className="chapter opening" aria-labelledby="opening-title">
       <div className="opening-grid">
         <div className="opening-copy">
-          <p className="opening-boot mono">
-            <span className="pulse" aria-hidden="true" />
-            <span>{IDENTITY.role}</span>
-            <span className="opening-boot-sep" aria-hidden="true">/</span>
-            <span>{IDENTITY.base}</span>
-            <span className="opening-boot-coords" aria-hidden="true">{IDENTITY.coords}</span>
+          <p className="opening-boot">
+            <span className="badge">AI Automation</span>
+            <span className="mono">Engineer · {IDENTITY.base}</span>
           </p>
 
           <h1 id="opening-title" className="opening-title">
-            I ship AI agents that survive <span className="opening-signal">real customers.</span>
+            I ship AI agents <span className="opening-soft">that survive</span>{' '}
+            <span className="opening-signal">real customers.</span>
           </h1>
 
           <p className="opening-sub">
@@ -25,6 +28,15 @@ export default function Opening() {
             LLMs to the systems businesses already run on — WhatsApp, CRMs,
             databases. Then I stay until it stops breaking.
           </p>
+
+          <ul className="opening-proof mono">
+            {PROOF.map((p) => (
+              <li key={p}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                {p}
+              </li>
+            ))}
+          </ul>
 
           <div className="opening-actions">
             <a href={`mailto:${IDENTITY.email}`} className="btn btn-primary">
@@ -50,8 +62,13 @@ export default function Opening() {
           </ul>
         </div>
 
-        <div className="opening-visual">
-          <ReplayConsole />
+        <div className="opening-visual" aria-hidden="true">
+          <Suspense fallback={<div className="neural-scene" />}>
+            <NeuralScene />
+          </Suspense>
+          <p className="opening-hint mono">
+            <span className="pulse" /> drag to rotate · {IDENTITY.coords}
+          </p>
         </div>
       </div>
 

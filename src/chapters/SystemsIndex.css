@@ -4,14 +4,15 @@
   margin-bottom: clamp(36px, 5vw, 60px);
 }
 
-.systems-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
+.systems-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--deck); box-shadow: var(--shadow-1); overflow: hidden; }
+.systems-list li:last-child .systems-row { border-bottom: 0; }
 
 .systems-row {
   display: grid;
   grid-template-columns: 56px minmax(0, 1.5fr) 150px minmax(0, 1.1fr) 90px;
   align-items: center;
   gap: 24px;
-  padding: 24px 16px;
+  padding: 24px 24px;
   border-bottom: 1px solid var(--line);
   position: relative;
   transition: background .25s var(--ease);
@@ -21,11 +22,11 @@
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 2px;
-  background: var(--signal);
+  background: var(--hl);
   transform: scaleY(0);
   transition: transform .3s var(--ease);
 }
-.systems-row:hover, .systems-row:focus-visible { background: var(--signal-10); }
+.systems-row:hover, .systems-row:focus-visible { background: var(--deck-2); }
 .systems-row:hover::before, .systems-row:focus-visible::before { transform: scaleY(1); }
 
 .systems-id { color: var(--faint); }
@@ -39,7 +40,7 @@
   line-height: 1.1;
 }
 .systems-tag { color: var(--dim); font-size: 14.5px; }
-.systems-kind { color: var(--dim); }
+.systems-kind { justify-self: start; padding: 4px 9px; border-radius: var(--r-s); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .systems-metric { display: grid; gap: 4px; }
 .systems-metric-value {
   font-family: var(--font-display);
@@ -51,7 +52,7 @@
 }
 .systems-metric-label { color: var(--faint); font-size: 10px; letter-spacing: .08em; }
 .systems-go { justify-self: end; color: var(--dim); transition: color .2s var(--ease), transform .25s var(--ease); }
-.systems-row:hover .systems-go { color: var(--signal); transform: translateX(4px); }
+.systems-row:hover .systems-go { color: var(--accent); transform: translateX(4px); }
 
 @media (max-width: 960px) {
   .systems-row { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px 18px; }

@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import FlowChapter from './FlowChapter.jsx';
-import useChapter from '../stage/useChapter.js';
+import useAutoplay from './useAutoplay.js';
 
-vi.mock('../stage/useChapter.js', () => ({ default: vi.fn() }));
+vi.mock('./useAutoplay.js', () => ({ default: vi.fn() }));
+const at = (active) => ({ active, select: vi.fn(), paused: false, running: true });
 
 const PROJECT = {
   id: '01',
@@ -25,7 +26,7 @@ const PROJECT = {
 };
 
 beforeEach(() => {
-  vi.mocked(useChapter).mockReturnValue(0);
+  vi.mocked(useAutoplay).mockReturnValue(at(0));
   window.matchMedia = (q) => ({
     matches: false, media: q, onchange: null,
     addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
@@ -33,6 +34,23 @@ beforeEach(() => {
 });
 
 describe('FlowChapter', () => {
+  it('lets a visitor pick any node from the node list', async () => {
+    const select = vi.fn();
+    vi.mocked(useAutoplay).mockReturnValue({ active: 0, select, paused: false, running: true });
+    render(<FlowChapter project={PROJECT} />);
+    const buttons = screen.getAllByRole('button', { pressed: false });
+    expect(buttons.length).toBe(PROJECT.flow.length - 1);
+    buttons[0].click();
+    expect(select).toHaveBeenCalledWith(1);
+  });
+
+  it('renders the replay showcase only for projects that ask for it', () => {
+    const { container, rerender } = render(<FlowChapter project={PROJECT} />);
+    expect(container.querySelector('.replay')).toBeNull();
+    rerender(<FlowChapter project={{ ...PROJECT, showcase: 'replay' }} />);
+    expect(container.querySelector('.replay')).not.toBeNull();
+  });
+
   it('renders the project name and flow label', () => {
     render(<FlowChapter project={PROJECT} />);
     expect(screen.getByRole('heading', { name: 'LegalitasAI' })).toBeInTheDocument();
@@ -70,14 +88,14 @@ describe('FlowChapter', () => {
   });
 
   it('marks the flag pane when it is the active one, and dims a non-flag pane', () => {
-    vi.mocked(useChapter).mockReturnValue(PROJECT.flagIndex);
+    vi.mocked(useAutoplay).mockReturnValue(at(PROJECT.flagIndex));
     const { container } = render(<FlowChapter project={PROJECT} />);
     expect(container.querySelector(`[data-pane="${PROJECT.flagIndex}"]`)).toHaveAttribute('data-state', 'flag');
     expect(container.querySelector('[data-pane="2"]')).toHaveAttribute('data-state', 'dim');
   });
 
   it('renders no flag pane for a project with no flagIndex', () => {
-    vi.mocked(useChapter).mockReturnValue(0);
+    vi.mocked(useAutoplay).mockReturnValue(at(0));
     const noFlag = { ...PROJECT, flagIndex: undefined };
     const { container } = render(<FlowChapter project={noFlag} />);
     expect(container.querySelector('[data-state="flag"]')).not.toBeInTheDocument();

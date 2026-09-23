@@ -5,7 +5,7 @@ import './FlowDiagram.css';
 // nodes, and a signal path that lights up behind the active node. The edge
 // into the active node carries a moving dash; the flagged node's outgoing
 // edge stays broken.
-export default function FlowDiagram({ positions, activeIndex, flagIndex, viewport }) {
+export default function FlowDiagram({ positions, activeIndex, flagIndex, viewport, onSelect }) {
   const edges = buildEdges(positions);
 
   return (
@@ -67,7 +67,13 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
             className="flow-label mono"
             style={{ '--nx': `${(p.x / viewport.width) * 100}%`, '--ny': `${(p.y / viewport.height) * 100}%` }}
           >
-            {p.label}
+            {onSelect ? (
+              // Pointer shortcut only — the node list beside the diagram is the
+              // keyboard/screen-reader path, so these stay out of the tab order.
+              <button type="button" tabIndex={-1} className="flow-label-btn" onClick={() => onSelect(i)}>
+                {p.label}
+              </button>
+            ) : p.label}
           </li>
         ))}
       </ul>

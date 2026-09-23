@@ -1,7 +1,7 @@
 .contact { padding-bottom: 48px; }
 .contact-title { font-size: clamp(38px, 6.2vw, 92px); font-stretch: 118%; font-weight: 800; letter-spacing: -.04em; line-height: .98; max-width: 16ch; }
-.contact-signal { color: var(--signal); }
-.contact-prompt { color: var(--signal); }
+.contact-signal { color: var(--hl); }
+.contact-prompt { color: var(--hl); }
 
 .contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 44px; }
 .contact-links { list-style: none; display: flex; flex-wrap: wrap; gap: 24px; margin: 36px 0 0; padding: 0; }

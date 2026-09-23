@@ -1,31 +1,20 @@
 import { useEffect } from 'react';
 import Lenis from 'lenis';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
-
-// Momentum-based smooth scrolling (Lenis), synced with GSAP's ScrollTrigger
-// so scroll-reveal animations still fire at the right positions.
-// Respects prefers-reduced-motion by bailing out entirely.
+// Momentum smooth scrolling. Nothing is pinned or scrubbed any more, so Lenis
+// runs its own rAF loop — no GSAP needed. Bails out under reduced motion.
 export default function useSmoothScroll() {
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
 
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out
       smoothWheel: true,
+      autoRaf: true,
     });
 
-    // Drive Lenis from GSAP's ticker so both share one rAF loop.
-    lenis.on('scroll', ScrollTrigger.update);
-    const raf = (time) => lenis.raf(time * 1000);
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
-    // Make in-page anchor links (href="#work") route through Lenis.
+    // Route in-page anchor links (href="#systems") through Lenis.
     const onAnchorClick = (e) => {
       const a = e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -40,7 +29,6 @@ export default function useSmoothScroll() {
 
     return () => {
       document.removeEventListener('click', onAnchorClick);
-      gsap.ticker.remove(raf);
       lenis.destroy();
     };
   }, []);

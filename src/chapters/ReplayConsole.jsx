@@ -44,7 +44,7 @@ export default function ReplayConsole() {
   const running = !reduced && shown < SCRIPT.length;
 
   return (
-    <figure ref={ref} className="replay panel brackets">
+    <figure ref={ref} className="replay panel">
       <figcaption className="replay-head mono">
         <span className="replay-title">
           <span className="replay-dot" data-running={running ? 'true' : undefined} aria-hidden="true" />

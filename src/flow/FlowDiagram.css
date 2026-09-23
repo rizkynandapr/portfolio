@@ -9,10 +9,10 @@
   vector-effect: non-scaling-stroke;
   transition: stroke .35s var(--ease);
 }
-.flow-edge[data-lit='true'] { stroke: rgba(198, 255, 61, .55); }
+.flow-edge[data-lit='true'] { stroke: var(--accent); }
 /* The edge into the active node carries a moving dash — data in transit. */
 .flow-edge[data-current='true'] {
-  stroke: var(--signal);
+  stroke: var(--hl);
   stroke-dasharray: 5 6;
   animation: flow-dash .9s linear infinite;
 }
@@ -33,11 +33,11 @@
   vector-effect: non-scaling-stroke;
   transition: fill .3s var(--ease), stroke .3s var(--ease);
 }
-.flow-dot[data-done='true'] { fill: rgba(198, 255, 61, .5); stroke: rgba(198, 255, 61, .6); }
-.flow-dot[data-state='active'] { fill: var(--signal); stroke: var(--signal); }
+.flow-dot[data-done='true'] { fill: var(--accent); stroke: var(--accent); }
+.flow-dot[data-state='active'] { fill: var(--hl); stroke: var(--hl); }
 .flow-dot[data-state='flag']   { fill: var(--alert); stroke: var(--alert); }
 
-.flow-ring { fill: none; stroke: var(--signal); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; transform-box: fill-box; transform-origin: center; animation: flow-ring 1.8s var(--ease) infinite; }
+.flow-ring { fill: none; stroke: var(--hl); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .6; transform-box: fill-box; transform-origin: center; animation: flow-ring 1.8s var(--ease) infinite; }
 .flow-ring[data-flag='true'] { stroke: var(--alert); }
 @keyframes flow-ring { from { transform: scale(.6); opacity: .8; } to { transform: scale(1.8); opacity: 0; } }
 
@@ -45,6 +45,7 @@
 
 .flow-label {
   position: absolute;
+  z-index: 1;
   left: var(--nx);
   top: var(--ny);
   transform: translate(14px, -50%);
@@ -60,10 +61,22 @@
 }
 .flow-label[data-state='dim']    { opacity: .55; }
 .flow-label[data-done='true']    { opacity: .85; }
-.flow-label[data-state='active'] { opacity: 1; color: var(--signal); font-weight: 500; }
+.flow-label[data-state='active'] { opacity: 1; color: var(--hl); font-weight: 500; }
 .flow-label[data-state='flag']   { opacity: 1; color: var(--alert); font-weight: 500; }
 
 @media (prefers-reduced-motion: reduce) {
   .flow-label[data-state='dim'] { opacity: 1; }
   .flow-ring { display: none; }
 }
+
+.flow-label-btn {
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.flow-label-btn:hover { color: var(--text); }

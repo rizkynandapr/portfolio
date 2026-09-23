@@ -30,7 +30,7 @@ export default function Contact() {
       <footer className="contact-foot mono">
         <span>© 2026 {IDENTITY.name}</span>
         <span>{IDENTITY.coords}</span>
-        <span>React · GSAP · Vercel</span>
+        <span>React · three.js · Vercel</span>
       </footer>
     </section>
   );

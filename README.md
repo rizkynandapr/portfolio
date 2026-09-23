@@ -1,19 +1,23 @@
 # Portfolio — Rizky Nanda Praditia
 
-Personal site for an AI automation engineer, styled as a **mission-control
-console**: near-black instrument grid, one signal colour (phosphor lime) for
-"live / press this", one alert colour (orange) for the guardrail that refuses.
+Personal site for an AI automation engineer. Palette carried over from
+[Fileloka](https://fileloka.id): cool blue-black (or light grey) surfaces, a
+lime **signal** for fills and "live" states, and an indigo **accent** as the
+second voice. Light and dark themes, following the system by default with a
+toggle in the nav.
 
-It opens with a scripted replay of the WhatsApp agent capturing an order, a
+It opens with the interactive 3D constellation from the previous site, a
 telemetry strip where every number is backed by a project write-up, and an
-index of every system on one screen. Each pipeline then gets a pinned trace
-that walks the real node graph as you scroll. An **Ask my agent** console
-answers questions about the work, grounded only in this site's own data.
+index of every system on one screen. Each pipeline gets a trace that walks the
+real node graph on its own while it is on screen — no scroll pinning — and any
+node can be clicked to pause and read. The WhatsApp chapter adds a scripted
+replay of the agent capturing an order. An **Ask my agent** console answers
+questions about the work, grounded only in this site's own data.
 
 ## Stack
 
-React 19 · Vite 8 · GSAP ScrollTrigger · Lenis · Vercel Functions (the agent)
-· self-hosted Archivo (variable width) / IBM Plex Sans / IBM Plex Mono
+React 19 · Vite 8 · three.js (lazy-loaded) · Lenis · Vercel Functions (the agent)
+· self-hosted Archivo (variable width) / Geist / Geist Mono
 
 ## Commands
 
@@ -35,12 +39,13 @@ api/
 src/
   data/projects.js     project content, flow graphs, headline metric per project
   data/profile.js      identity, telemetry, roles, stack — shared with the agent
-  chapters/            opening + replay, systems index, compact, stack/log, about, contact
-  flow/                pinned trace: diagram, chapter, mobile stepper, layouts/
+  chapters/            opening + 3D orb, replay, systems index, compact, stack/log, about, contact
+  flow/                auto-play trace: diagram, chapter, useAutoplay, mobile stepper, layouts/
   agent/               agent console UI and client
-  stage/               scroll host, pinned-chapter hook, motion preferences
-  styles/              fonts, HUD primitives
-  ui/                  nav (scrollspy + local clock), section head, copy-email
+  stage/               scroll host, smooth scroll, motion preferences
+  styles/              fonts, shared primitives
+  ui/                  nav (scrollspy, clock, theme toggle), section head, copy-email
+public/theme.js        sets data-theme before first paint (external, CSP-safe)
 ```
 
 ## The agent (`/api/chat`)
@@ -72,17 +77,20 @@ of defence whatever the rate limiter does.
   logged server-side and never echoed to the client.
 - The system prompt treats visitor text as data and grounds answers in
   `src/data/*` only. Replies render as text nodes, never HTML.
-- CSP stays strict: `script-src 'self'`, `connect-src 'self'`, `object-src 'none'`,
+- CSP stays strict — the theme bootstrap is an external file, not inline: `script-src 'self'`, `connect-src 'self'`, `object-src 'none'`,
   `frame-ancestors 'none'`, plus HSTS, COOP and CORP.
 
 ## Behaviour worth knowing
 
-- **Below 768px** pinning is off and each pipeline becomes a tap-through stepper.
-- **`prefers-reduced-motion: reduce`** drops pinning, stops the replay and
-  renders every trace as a complete static diagram.
-- Node text is always in the DOM; scroll only changes `data-state`, so screen
-  readers reach every node.
-- Every trace has a **Skip trace ↓** link to the next chapter.
+- Traces only tick while at least a third of them is on screen; the 3D orb
+  stops rendering when off-screen or when the tab is hidden.
+- **Below 768px** each pipeline becomes a tap-through stepper.
+- **`prefers-reduced-motion: reduce`** stops the traces, the replay and the orb,
+  and renders every pipeline as a complete static diagram.
+- Node text is always in the DOM; only `data-state` changes, so screen readers
+  reach every node.
+- Theme choice is remembered in `localStorage` (best-effort); without it the
+  site follows `prefers-color-scheme`.
 
 ## Editing content
 

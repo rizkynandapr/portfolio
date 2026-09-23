@@ -1,36 +1,94 @@
-/* Mission Control — design tokens and base.
-   One signal colour, one alert colour, everything else is phosphor-tinted grey.
-   The signal is reserved for "this is live / this is the thing to press". */
-:root {
+/* Tokens — Fileloka palette.
+   Lime (--signal) is a FILL: buttons, badges, live bars, always with dark ink.
+   --hl is the highlight for text and strokes: lime on dark, indigo on light,
+   because lime text on a light surface is unreadable.
+   Indigo (--accent) is the second voice: completed paths, links, JSON. */
+:root,
+:root[data-theme='dark'] {
   color-scheme: dark;
 
-  --void:    #070908;
-  --deck:    #0b0e0c;
-  --deck-2:  #101411;
-  --line:    rgba(214, 235, 210, .08);
-  --line-2:  rgba(214, 235, 210, .16);
+  --void:    #07090d;
+  --deck:    #0e1218;
+  --deck-2:  #141a22;
+  --line:    #1f2732;
+  --line-2:  #344150;
+  --grid:    rgba(232, 237, 243, .07);
 
-  --text:    #e3e8e0;
-  --dim:     #97a393;
-  --faint:   #5f6b5d;
+  --text:    #e8edf3;
+  --text-2:  #c9d1dc;
+  --dim:     #8c97a7;
+  --faint:   #5f6a7a;
 
-  --signal:     #c6ff3d;
-  --signal-ink: #0a0d05;
-  --signal-10:  rgba(198, 255, 61, .10);
-  --alert:      #ff6b3d;
+  --signal:       #c4ee2f;
+  --signal-hover: #d4f55f;
+  --signal-ink:   #1a2400;
+  --signal-10:    #1e2608;
 
+  --hl:          #c4ee2f;
+  --accent:      #8f88ff;
+  --accent-soft: #1a1842;
+  --alert:       #f08a7c;
+  --ok:          #5fd39f;
+
+  --shadow-1: none;
+  --shadow-2: 0 24px 60px -24px rgba(0, 0, 0, .85);
+
+  /* Orb (three.js) reads these at runtime. */
+  --orb-pulse: #c4ee2f;
+  --orb-trail: #8f88ff;
+  --orb-node:  #3a4658;
+  --orb-edge:  #8f88ff;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --void:    #edf0f3;
+  --deck:    #fafbfc;
+  --deck-2:  #f1f3f6;
+  --line:    #d8dee6;
+  --line-2:  #aeb8c5;
+  --grid:    rgba(10, 15, 26, .09);
+
+  --text:    #0a0f1a;
+  --text-2:  #1c2433;
+  --dim:     #556072;
+  --faint:   #7c8796;
+
+  --signal:       #c4ee2f;
+  --signal-hover: #b5e01c;
+  --signal-ink:   #1a2400;
+  --signal-10:    #eef8cc;
+
+  --hl:          #3a2ef0;
+  --accent:      #3a2ef0;
+  --accent-soft: #e5e3ff;
+  --alert:       #c0352a;
+  --ok:          #0b7a50;
+
+  --shadow-1: 0 1px 0 rgba(10, 15, 26, .04), 0 1px 2px rgba(10, 15, 26, .06);
+  --shadow-2: 0 1px 0 rgba(10, 15, 26, .04), 0 18px 40px -16px rgba(10, 15, 26, .25);
+
+  --orb-pulse: #3a2ef0;
+  --orb-trail: #8fb31a;
+  --orb-node:  #aeb8c5;
+  --orb-edge:  #3a2ef0;
+}
+
+:root {
   --ease:  cubic-bezier(.22, 1, .36, 1);
 
   --font-display: 'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, sans-serif;
-  --font-body:    'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-body:    'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'Geist Mono Variable', 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --r-s: 6px;
+  --r-m: 10px;
+  --r-l: 16px;
 
   --gutter: clamp(16px, 4.75vw, 72px);
   --max: 1320px;
-  --nav-h: 60px;
-
-  /* Kept for the flow diagram: opacity of nodes that are not active. */
-  --dim-op: .28;
+  --nav-h: 64px;
 }
 
 * { box-sizing: border-box; }
@@ -52,24 +110,20 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color .3s var(--ease), color .3s var(--ease);
 }
 
-/* Instrument grid: fixed, fades out toward the edges so it reads as depth
-   rather than graph paper. Pure CSS, no paint cost on scroll. */
+/* Dot grid, fading toward the edges. Fixed and pure CSS — no scroll cost. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(to right, var(--line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-  background-size: 64px 64px;
-  background-position: calc(var(--gutter) - 1px) 0;
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 80%);
-  opacity: .7;
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.3px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 90% 75% at 50% 25%, #000 25%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 25%, #000 25%, transparent 85%);
 }
 
 #root { position: relative; z-index: 1; overflow-x: clip; }
@@ -91,14 +145,15 @@ button { font: inherit; color: inherit; }
 ::selection { background: var(--signal); color: var(--signal-ink); }
 
 :focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
+  border-radius: var(--r-s);
 }
 
 .mono {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .14em;
+  font-size: 11.5px;
+  letter-spacing: .1em;
   text-transform: uppercase;
 }
 
@@ -111,8 +166,7 @@ button { font: inherit; color: inherit; }
 }
 
 /* Node text stays in the DOM and opaque by default so assistive tech and
-   reduced-motion users reach every node; scroll dimming is applied through
-   data-state rules in the flow stylesheets. */
+   reduced-motion users reach every node. */
 [data-node], [data-pane] { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {

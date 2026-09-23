@@ -1,21 +1,23 @@
-/* ---------- brief (static) ---------- */
+/* ---------- brief ---------- */
 .flow-brief {
   display: grid;
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   gap: clamp(32px, 6vw, 96px);
 }
 
-.flow-brief-num { color: var(--signal); margin-bottom: 14px; }
+.flow-brief-num { margin-bottom: 18px; }
 .flow-brief h2 { font-size: clamp(38px, 5vw, 72px); font-stretch: 118%; font-weight: 800; letter-spacing: -.035em; }
-.flow-brief-tag { color: var(--dim); font-size: 17px; margin-top: 12px; }
+.flow-brief-tag { color: var(--dim); font-size: 18px; margin-top: 12px; }
 
 .flow-brief-metric {
   display: inline-grid;
   gap: 8px;
-  margin-top: 36px;
+  margin-top: 32px;
   padding: 18px 22px;
   border: 1px solid var(--line);
-  --bracket: var(--signal);
+  border-radius: var(--r-l);
+  background: var(--deck);
+  box-shadow: var(--shadow-1);
 }
 .flow-brief-metric-value {
   font-family: var(--font-display);
@@ -24,25 +26,23 @@
   font-size: clamp(36px, 4vw, 52px);
   line-height: 1;
   letter-spacing: -.03em;
-  color: var(--signal);
+  color: var(--hl);
 }
-.flow-brief-metric-label { color: var(--dim); letter-spacing: .08em; }
+.flow-brief-metric-label { color: var(--dim); letter-spacing: .06em; }
 
-.flow-eyebrow { color: var(--signal); margin-top: 26px; }
+.flow-eyebrow { color: var(--accent); margin-top: 26px; font-weight: 600; }
 .flow-eyebrow:first-child { margin-top: 4px; }
-.flow-body { margin-top: 10px; font-size: 15.5px; line-height: 1.72; color: var(--text); max-width: 62ch; }
+.flow-body { margin-top: 10px; font-size: 16px; line-height: 1.72; color: var(--text-2); max-width: 62ch; }
 
 .flow-stack { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 0; padding: 0; }
 .flow-links { display: flex; gap: 22px; margin-top: 22px; }
 
-/* ---------- trace (pinned) ---------- */
+.flow-showcase { margin-top: 32px; }
+
+/* ---------- trace (auto-play, no pinning) ---------- */
 .flow-trace {
-  margin-top: clamp(56px, 7vw, 96px);
-  min-height: 100svh;
-  padding: calc(var(--nav-h) + 20px) 0 28px;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 18px;
+  margin-top: clamp(40px, 5vw, 64px);
+  padding: 18px clamp(18px, 2.4vw, 28px) 24px;
 }
 
 .flow-trace-bar {
@@ -50,36 +50,42 @@
   align-items: center;
   gap: 18px;
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--line-2);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
   color: var(--dim);
 }
-.flow-trace-key { color: var(--signal); }
-.flow-trace-progress { margin-left: auto; color: var(--text); font-variant-numeric: tabular-nums; }
-.flow-trace-skip { color: var(--faint); border: 1px solid var(--line); padding: 4px 9px; transition: color .2s var(--ease), border-color .2s var(--ease); }
-.flow-trace-skip:hover { color: var(--text); border-color: var(--line-2); }
+.flow-trace-title { display: inline-flex; align-items: center; gap: 12px; }
+.flow-trace-key { color: var(--accent); font-weight: 600; }
+.flow-trace-status { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; }
+.flow-trace-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.flow-trace-status[data-paused] .flow-trace-dot { background: var(--faint); box-shadow: none; }
+.flow-trace-progress { color: var(--text); font-variant-numeric: tabular-nums; }
+.flow-trace-status + .flow-trace-progress { margin-left: 0; }
+.flow-trace-bar > .flow-trace-progress:nth-child(2) { margin-left: auto; }
 
 .flow-trace-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(28px, 4vw, 64px);
-  align-items: center;
-  min-height: 0;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: stretch;
 }
 
 .flow-trace-diagram {
   position: relative;
   justify-self: center;
-  height: min(calc(100svh - var(--nav-h) - 130px), 680px);
+  width: 100%;
+  max-width: 400px;
   aspect-ratio: 520 / 760;
-  max-width: 100%;
-  background-image:
-    linear-gradient(to right, var(--line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-  background-size: 26px 26px;
-  background-color: var(--deck);
+  border-radius: var(--r-m);
+  background-color: var(--deck-2);
+  background-image: radial-gradient(var(--grid) 1.1px, transparent 1.2px);
+  background-size: 18px 18px;
+  border: 1px solid var(--line);
 }
 
-.flow-panes { list-style: none; margin: 0; padding: 0; position: relative; min-height: 340px; }
+.flow-trace-side { display: grid; grid-template-rows: 1fr auto; gap: 22px; min-width: 0; }
+
+.flow-panes { list-style: none; margin: 0; padding: 0; position: relative; min-height: 260px; }
 
 /* Panes share one box, so only the active one is painted. Text stays in the
    DOM at opacity 0 so screen readers still reach every node. */
@@ -91,33 +97,68 @@
   justify-content: center;
   transition: opacity .45s var(--ease), transform .45s var(--ease);
 }
-.flow-pane[data-state='dim'] { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.flow-pane[data-state='dim'] { opacity: 0; transform: translateY(8px); pointer-events: none; }
 
 .flow-pane-counter { color: var(--dim); }
 .flow-pane-flag { color: var(--alert); }
 .flow-pane-title {
-  font-size: clamp(28px, 3.2vw, 46px);
+  font-size: clamp(28px, 3vw, 42px);
   font-stretch: 116%;
   font-weight: 800;
   letter-spacing: -.03em;
-  margin-top: 14px;
+  margin-top: 12px;
 }
-.flow-pane-detail { margin-top: 18px; font-size: 16.5px; line-height: 1.72; color: var(--dim); max-width: 46ch; }
+.flow-pane-detail { margin-top: 16px; font-size: 16.5px; line-height: 1.72; color: var(--text-2); max-width: 52ch; }
 
-.flow-pane[data-state='flag'] { border-left: 2px solid var(--alert); padding-left: 22px; }
+.flow-pane[data-state='flag'] { border-left: 3px solid var(--alert); padding-left: 22px; }
 .flow-pane[data-state='flag'] .flow-pane-title { color: var(--alert); }
 
-/* Reduced motion: no pinning, every pane readable at once. */
-.flow-chapter.is-static .flow-trace { min-height: 0; padding-top: 0; }
+/* Node picker */
+.flow-nodes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 6px;
+}
+.flow-node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  background: var(--deck);
+  color: var(--dim);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: .01em;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.flow-node:hover { color: var(--text); border-color: var(--line-2); }
+.flow-node-i { color: var(--faint); font-variant-numeric: tabular-nums; }
+.flow-node-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.flow-node[data-done] .flow-node-i { color: var(--accent); }
+.flow-node[data-state='active'] { color: var(--signal-ink); background: var(--signal); border-color: var(--signal); }
+.flow-node[data-state='active'] .flow-node-i { color: var(--signal-ink); }
+.flow-node[data-state='flag'] { color: var(--alert); border-color: var(--alert); background: color-mix(in srgb, var(--alert) 12%, transparent); }
+
+/* Reduced motion: every pane readable at once. */
 .flow-chapter.is-static .flow-trace-grid { align-items: start; }
 .flow-chapter.is-static .flow-panes { display: grid; gap: 26px; min-height: 0; }
 .flow-chapter.is-static .flow-pane { position: static; }
 .flow-chapter.is-static .flow-pane[data-state='dim'] { opacity: 1; transform: none; }
 .flow-chapter.is-static .flow-trace-progress { display: none; }
 
-.flow-trace-mobile { margin-top: 48px; border-top: 1px solid var(--line-2); padding-top: 18px; }
+.flow-trace-mobile { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); }
 .flow-trace-label { color: var(--dim); }
 
-@media (max-width: 960px) {
+@media (max-width: 1080px) {
   .flow-brief { grid-template-columns: 1fr; }
+  .flow-trace-grid { grid-template-columns: 1fr; }
+  .flow-trace-diagram { max-width: 340px; }
 }

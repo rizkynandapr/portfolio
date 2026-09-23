@@ -90,7 +90,7 @@ export default function AgentConsole() {
 
       <section
         id="agent-console"
-        className="agent brackets"
+        className="agent"
         role="dialog"
         aria-modal="false"
         aria-labelledby={titleId}
