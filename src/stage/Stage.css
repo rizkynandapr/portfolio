@@ -1,39 +1,11 @@
-.stage {
-  position: relative;
-  background: var(--paper);
-}
+.stage { position: relative; }
 
-/* Content starts near the top rather than centring inside the chapter's
-   scroll budget — centring in a 200–400svh block buries the opening screen
-   under a viewport of empty paper. Padding clears the fixed nav. */
+/* Every chapter shares one measure and one rhythm. Natural height — the
+   pinned flow chapters are the only ones that spend extra scroll. */
 .chapter {
   position: relative;
-  min-height: 100svh;
-  padding: 132px var(--v1) 0;
-  display: grid;
-  align-content: start;
-  border-top: 1px solid var(--rule);
+  max-width: calc(var(--max) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: clamp(88px, 11vw, 140px) var(--gutter);
 }
-
-.chapter-mark {
-  position: absolute;
-  top: 90px;
-  left: var(--v1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  opacity: .68;
-}
-.chapter-mark::before {
-  content: '';
-  width: 26px;
-  height: 1px;
-  background: var(--ink);
-}
-
-.chapter-dark {
-  background: var(--press);
-  color: var(--paper);
-  --rule: rgba(242, 241, 237, .16);
-}
-.chapter-dark .chapter-mark::before { background: var(--paper); }
+.chapter + .chapter { border-top: 1px solid var(--line); }

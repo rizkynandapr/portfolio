@@ -1,9 +1,10 @@
 import nodeState from './nodeState.js';
 import './FlowDiagram.css';
 
-// Renders positioned nodes as ink line-work: a hairline SVG spine with
-// open circles, plus a mono label per node. No glow, no fill — the active
-// node is marked by filling its circle, nothing else.
+// Renders positioned nodes as an instrument trace: hairline edges, open
+// nodes, and a signal path that lights up behind the active node. The edge
+// into the active node carries a moving dash; the flagged node's outgoing
+// edge stays broken.
 export default function FlowDiagram({ positions, activeIndex, flagIndex, viewport }) {
   const edges = buildEdges(positions);
 
@@ -22,11 +23,24 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
               key={`e${key}`}
               data-edge={key}
               data-broken={broken ? 'true' : undefined}
+              data-lit={to < activeIndex ? 'true' : undefined}
+              data-current={to === activeIndex && !broken ? 'true' : undefined}
               className="flow-edge"
               d={edgePath(positions[from], positions[to])}
             />
           );
         })}
+
+        {positions[activeIndex] && (
+          <circle
+            key={`ring${activeIndex}`}
+            className="flow-ring"
+            data-flag={activeIndex === flagIndex ? 'true' : undefined}
+            cx={positions[activeIndex].x}
+            cy={positions[activeIndex].y}
+            r="9"
+          />
+        )}
 
         {positions.map((p, i) => (
           <circle
@@ -36,6 +50,7 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
             cy={p.y}
             r="5"
             data-state={nodeState(i, activeIndex, flagIndex)}
+            data-done={i < activeIndex ? 'true' : undefined}
           />
         ))}
       </svg>
@@ -47,6 +62,7 @@ export default function FlowDiagram({ positions, activeIndex, flagIndex, viewpor
             key={p.label}
             data-node={i}
             data-state={nodeState(i, activeIndex, flagIndex)}
+            data-done={i < activeIndex ? 'true' : undefined}
             data-side={p.x > viewport.width / 2 ? 'right' : 'left'}
             className="flow-label mono"
             style={{ '--nx': `${(p.x / viewport.width) * 100}%`, '--ny': `${(p.y / viewport.height) * 100}%` }}

@@ -28,23 +28,24 @@ beforeEach(() => {
   });
 });
 
-// Ordering rule (from src/App.jsx): Opening, Premise, one FlowChapter per
+// Ordering rule (from src/App.jsx): Opening, SystemsIndex, one FlowChapter per
 // project with a `flow` (in PROJECTS order), one Compact per project
 // without a `flow` (in PROJECTS order), StackExp, About, Contact — all
 // inside <Stage id="top">. Derived here from that rule, not from output.
 const flowIds = PROJECTS.filter((p) => p.flow).map((p) => `work-${p.id}`);
 const compactIds = PROJECTS.filter((p) => !p.flow).map((p) => `work-${p.id}`);
-const EXPECTED_ID_ORDER = ['top', ...flowIds, ...compactIds, 'stack', 'about', 'contact'];
+const EXPECTED_ID_ORDER = ['top', 'systems', ...flowIds, ...compactIds, 'stack', 'about', 'contact'];
 
 describe('App', () => {
   it('renders every project exactly once', () => {
     const { container } = render(<App />);
 
     for (const p of PROJECTS) {
-      expect(screen.getByText(p.name)).toBeInTheDocument();
+      // Once as a chapter heading; the systems index lists it as a link row.
+      expect(screen.getByRole('heading', { level: 2, name: p.name })).toBeInTheDocument();
     }
 
-    const sections = container.querySelectorAll('[id^="work-"]');
+    const sections = container.querySelectorAll('section[id^="work-"]');
     expect(sections).toHaveLength(PROJECTS.length);
   });
 
@@ -68,6 +69,26 @@ describe('App', () => {
     for (const link of navLinks) {
       const id = link.getAttribute('href').slice(1);
       expect(container.querySelector(`#${id}`)).not.toBeNull();
+    }
+  });
+});
+
+describe('App — systems index', () => {
+  it('links every index row to its project chapter', () => {
+    const { container } = render(<App />);
+    const rows = container.querySelectorAll('#systems a[href^="#work-"]');
+    expect(rows).toHaveLength(PROJECTS.length);
+    for (const row of rows) {
+      expect(container.querySelector(row.getAttribute('href'))).not.toBeNull();
+    }
+  });
+
+  it('gives every flow chapter a skip link that resolves', () => {
+    const { container } = render(<App />);
+    const skips = container.querySelectorAll('.flow-trace-skip');
+    expect(skips.length).toBe(PROJECTS.filter((p) => p.flow).length);
+    for (const s of skips) {
+      expect(container.querySelector(s.getAttribute('href'))).not.toBeNull();
     }
   });
 });

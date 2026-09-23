@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { useRef } from 'react';
-import useChapter from './useChapter.js';
+import useChapter, { SLOT_VH } from './useChapter.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 vi.mock('gsap', () => ({ gsap: { registerPlugin: vi.fn() } }));
@@ -44,7 +44,7 @@ describe('useChapter', () => {
     // `end` must be a function so ScrollTrigger re-reads window.innerHeight
     // on refresh, rather than a string computed once at mount.
     expect(typeof config.end).toBe('function');
-    expect(config.end()).toBe(`+=${9 * window.innerHeight}`);
+    expect(config.end()).toBe(`+=${Math.round(9 * SLOT_VH * window.innerHeight)}`);
     expect(config.invalidateOnRefresh).toBe(true);
   });
 

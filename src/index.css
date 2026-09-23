@@ -1,28 +1,41 @@
+/* Mission Control — design tokens and base.
+   One signal colour, one alert colour, everything else is phosphor-tinted grey.
+   The signal is reserved for "this is live / this is the thing to press". */
 :root {
-  color-scheme: light only;
+  color-scheme: dark;
 
-  --paper: #f2f1ed;
-  --ink:   #1d1c19;
-  --press: #0b0a09;
-  --rule:  rgba(29, 28, 25, .14);
-  --flag:  #8a4b2a;
+  --void:    #070908;
+  --deck:    #0b0e0c;
+  --deck-2:  #101411;
+  --line:    rgba(214, 235, 210, .08);
+  --line-2:  rgba(214, 235, 210, .16);
+
+  --text:    #e3e8e0;
+  --dim:     #97a393;
+  --faint:   #5f6b5d;
+
+  --signal:     #c6ff3d;
+  --signal-ink: #0a0d05;
+  --signal-10:  rgba(198, 255, 61, .10);
+  --alert:      #ff6b3d;
 
   --ease:  cubic-bezier(.22, 1, .36, 1);
 
-  --font-display: 'Newsreader Variable', Newsreader, Georgia, serif;
+  --font-display: 'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, sans-serif;
   --font-body:    'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono:    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Editorial grid — percentages, matching the reference's structure. */
-  --v1: 4.75%;
-  --colB: 24%;
+  --gutter: clamp(16px, 4.75vw, 72px);
+  --max: 1320px;
+  --nav-h: 60px;
 
-  --dim: .18;
+  /* Kept for the flow diagram: opacity of nodes that are not active. */
+  --dim-op: .28;
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: auto; }
+html { scroll-behavior: auto; background: var(--void); }
 
 /* Lenis drives smooth scrolling in JS; native smooth would conflict. */
 html.lenis, html.lenis body { height: auto; }
@@ -32,26 +45,55 @@ html.lenis, html.lenis body { height: auto; }
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--void);
+  color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-#root { position: relative; overflow-x: hidden; }
+/* Instrument grid: fixed, fades out toward the edges so it reads as depth
+   rather than graph paper. Pure CSS, no paint cost on scroll. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: calc(var(--gutter) - 1px) 0;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000 20%, transparent 80%);
+  opacity: .7;
+}
+
+#root { position: relative; z-index: 1; overflow-x: clip; }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -.01em;
-  line-height: 1.08;
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -.02em;
+  line-height: 1.02;
   margin: 0;
+  text-wrap: balance;
 }
 
-p { margin: 0; }
+p { margin: 0; text-wrap: pretty; }
 a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+
+::selection { background: var(--signal); color: var(--signal-ink); }
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
 
 .mono {
   font-family: var(--font-mono);
@@ -60,12 +102,17 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
 }
 
-.flow-chip { border: 1px solid var(--rule); padding: 5px 11px; }
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
 
-/* Node text stays fully opaque here so it is readable for assistive tech
-   and under prefers-reduced-motion — panes are stacked absolutely and the
-   actual scroll-driven dimming is applied by the React-rendered data-state
-   attribute in CSS elsewhere, not by this rule. */
+/* Node text stays in the DOM and opaque by default so assistive tech and
+   reduced-motion users reach every node; scroll dimming is applied through
+   data-state rules in the flow stylesheets. */
 [data-node], [data-pane] { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {

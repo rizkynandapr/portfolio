@@ -4,7 +4,7 @@ import './Stage.css';
 // against this element's scroll, which is why there is no inner scroller.
 export default function Stage({ children }) {
   return (
-    <main id="top" className="stage">
+    <main className="stage">
       {children}
     </main>
   );

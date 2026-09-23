@@ -1,31 +1,37 @@
-.flow-stepper { margin-top: 22px; }
+.flow-stepper { margin-top: 18px; }
 
-.flow-stepper-bar { list-style: none; display: flex; gap: 3px; margin: 0 0 18px; padding: 0; }
-.flow-stepper-bar li { height: 2px; flex: 1; background: var(--rule); }
-.flow-stepper-bar li[data-on] { background: var(--ink); }
+.flow-stepper-bar { list-style: none; display: flex; gap: 3px; margin: 0 0 20px; padding: 0; }
+.flow-stepper-bar li { height: 3px; flex: 1; background: var(--line-2); transition: background .3s var(--ease); }
+.flow-stepper-bar li[data-on] { background: var(--signal); }
 
-.flow-stepper-panes { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.flow-stepper-panes { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 
-.flow-stepper-pane { transition: opacity .35s var(--ease); }
-.flow-stepper-pane[data-state='dim'] { opacity: var(--dim); }
-.flow-stepper-pane[data-state='flag'] { border-left: 2px solid var(--flag); padding-left: 14px; }
-.flow-stepper-pane[data-state='flag'] .flow-stepper-title { color: var(--flag); }
+.flow-stepper-pane { transition: opacity .35s var(--ease); padding-left: 14px; border-left: 1px solid var(--line-2); }
+.flow-stepper-pane[data-state='dim'] { opacity: .38; }
+.flow-stepper-pane[data-state='active'] { border-left-color: var(--signal); }
+.flow-stepper-pane[data-state='flag'] { border-left: 2px solid var(--alert); }
+.flow-stepper-pane[data-state='flag'] .flow-stepper-title { color: var(--alert); }
 
-.flow-stepper-counter { opacity: .62; }
-.flow-stepper-title { font-size: 22px; margin-top: 8px; }
-.flow-stepper-detail { font-size: 14px; line-height: 1.6; margin-top: 8px; }
+.flow-stepper-counter { color: var(--dim); }
+.flow-stepper-title { font-size: 22px; font-stretch: 112%; margin-top: 8px; }
+.flow-stepper-detail { font-size: 14.5px; line-height: 1.65; margin-top: 8px; color: var(--dim); }
 
 .flow-stepper-next {
-  margin-top: 20px;
-  background: none;
-  border: 1px solid var(--ink);
-  color: var(--ink);
-  padding: 11px 18px;
+  margin-top: 22px;
+  width: 100%;
+  background: var(--signal);
+  border: 0;
+  color: var(--signal-ink);
+  padding: 14px 18px;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   letter-spacing: .14em;
   text-transform: uppercase;
+  position: sticky;
+  bottom: 16px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 
 @media (prefers-reduced-motion: reduce) {

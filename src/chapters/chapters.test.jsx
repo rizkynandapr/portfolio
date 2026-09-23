@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Opening from './Opening.jsx';
-import Premise from './Premise.jsx';
+import SystemsIndex from './SystemsIndex.jsx';
+import PROJECTS from '../data/projects.js';
+import { TELEMETRY } from '../data/profile.js';
 import StackExp from './StackExp.jsx';
 import About from './About.jsx';
 import Contact from './Contact.jsx';
@@ -29,20 +31,38 @@ const FIXTURE_PROJECT_NO_DEMO = {
 };
 
 describe('chapters', () => {
-  it('Opening states the name and the headline', () => {
+  it('Opening states the headline and the name', () => {
     render(<Opening />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Building AI agents');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('I ship AI agents');
+    expect(screen.getByText(/I'm Rizky Nanda/)).toBeInTheDocument();
   });
 
-  it('Premise keeps both metrics', () => {
-    render(<Premise />);
-    expect(screen.getByText(/10/)).toBeInTheDocument();
-    expect(screen.getByText(/80%/)).toBeInTheDocument();
+  it('Opening shows every telemetry figure with its context', () => {
+    render(<Opening />);
+    for (const t of TELEMETRY) {
+      expect(screen.getByText(t.value)).toBeInTheDocument();
+      expect(screen.getByText(t.context)).toBeInTheDocument();
+    }
+  });
+
+  it('Opening offers email and a CV download', () => {
+    render(<Opening />);
+    expect(screen.getByRole('link', { name: /email me/i })).toHaveAttribute('href', 'mailto:rizkynandapr@gmail.com');
+    expect(screen.getByRole('link', { name: /download cv/i })).toHaveAttribute('download');
+  });
+
+  it('SystemsIndex lists every project once', () => {
+    render(<SystemsIndex />);
+    for (const p of PROJECTS) {
+      expect(screen.getByText(p.name)).toBeInTheDocument();
+    }
   });
 
   it('StackExp lists every role and every tool group', () => {
     render(<StackExp />);
     expect(screen.getByText('Aksoro')).toBeInTheDocument();
+    expect(screen.getByText('Cekat.AI')).toBeInTheDocument();
+    expect(screen.getByText(/Incoming/)).toBeInTheDocument();
     expect(screen.getByText('damirich.id')).toBeInTheDocument();
     expect(screen.getByText('AI / LLM')).toBeInTheDocument();
     expect(screen.getByText('Web & Infra')).toBeInTheDocument();
@@ -60,6 +80,7 @@ describe('chapters', () => {
     );
     expect(screen.getByRole('link', { name: 'LinkedIn' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'GitHub' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ask my agent/i })).toBeInTheDocument();
   });
 
   describe('Compact', () => {

@@ -43,6 +43,8 @@ const LEGALITASAI_FLOW = [
 const PROJECTS = [
   {
     id: '01',
+    kind: 'Production agent',
+    metric: { value: '81.8%', label: 'Hit Rate@5, up from 63.6%' },
     name: 'LegalitasAI',
     tag: 'RAG with a Citation Guardrail',
     period: '2026 · Open source',
@@ -57,6 +59,8 @@ const PROJECTS = [
   },
   {
     id: '02',
+    kind: 'Production agent',
+    metric: { value: '<30m', label: 'to onboard the next business' },
     name: 'WhatsApp AI Chatbot',
     tag: 'Universal n8n Template for SMBs',
     period: '2026 · Open source',
@@ -70,6 +74,8 @@ const PROJECTS = [
   },
   {
     id: '03',
+    kind: 'Pipeline',
+    metric: { value: '5', label: 'LLM passes per upload + live job search' },
     name: 'ApplyIQ',
     tag: 'AI Job Application Assistant',
     period: 'May 2026 – Jul 2026',
@@ -83,6 +89,8 @@ const PROJECTS = [
   },
   {
     id: '04',
+    kind: 'Pipeline',
+    metric: { value: '40/30/20/10', label: 'fixed scoring weights' },
     name: 'TalentScout',
     tag: 'AI Recruitment Pipeline',
     period: 'Jun 2026',
@@ -96,6 +104,8 @@ const PROJECTS = [
   },
   {
     id: '05',
+    kind: 'Model',
+    metric: { value: '98%', label: 'accuracy on ~32k headlines' },
     name: 'Clickbait Detector',
     tag: 'NLP Headline Classifier',
     period: '2025',

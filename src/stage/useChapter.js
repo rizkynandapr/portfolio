@@ -4,6 +4,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Scroll distance spent per slot, as a fraction of the viewport height.
+// Under half a screen per node, so a nine-node trace costs ~4.5 screens.
+export const SLOT_VH = 0.45;
+
 // Pins a chapter and reports which step the scroll position lands on.
 // Scroll is divided into steps + 1 slots: slot 0 is the lead-in screen where
 // the chapter title holds, then one slot per node. Returns 0 and registers
@@ -20,7 +24,7 @@ export default function useChapter({ ref, steps, enabled }) {
     const trigger = ScrollTrigger.create({
       trigger: ref.current,
       start: 'top top',
-      end: () => `+=${slots * window.innerHeight}`,
+      end: () => `+=${Math.round(slots * SLOT_VH * window.innerHeight)}`,
       invalidateOnRefresh: true,
       pin: true,
       pinSpacing: true,

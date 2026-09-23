@@ -1,0 +1,19 @@
+.contact { padding-bottom: 48px; }
+.contact-title { font-size: clamp(38px, 6.2vw, 92px); font-stretch: 118%; font-weight: 800; letter-spacing: -.04em; line-height: .98; max-width: 16ch; }
+.contact-signal { color: var(--signal); }
+.contact-prompt { color: var(--signal); }
+
+.contact-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 44px; }
+.contact-links { list-style: none; display: flex; flex-wrap: wrap; gap: 24px; margin: 36px 0 0; padding: 0; }
+
+.contact-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(80px, 10vw, 140px);
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 10px;
+}
