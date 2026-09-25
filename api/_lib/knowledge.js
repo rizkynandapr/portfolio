@@ -2,6 +2,7 @@
 // the agent can only say what the page already says.
 import PROJECTS from '../../src/data/projects.js';
 import { IDENTITY, LINKS, ROLES, STACK, EDUCATION, TELEMETRY, NOW, STORY, PRINCIPLES } from '../../src/data/profile.js';
+import { retrieve } from '../../src/agent/rag/answer.js';
 
 function projectBlock(p) {
   const lines = [
@@ -55,7 +56,19 @@ export function buildKnowledge() {
   ].join('\n');
 }
 
-export function buildSystemPrompt() {
+// Only the chunks that match the question, plus the basics. Roughly a fifth
+// of the full knowledge block, so each live answer costs far fewer tokens.
+export function buildContext(query) {
+  const always = [
+    `${IDENTITY.name} ("${IDENTITY.short}"), ${IDENTITY.role}, based in ${IDENTITY.base} (UTC+7). Email: ${IDENTITY.email}.`,
+    `Right now: ${NOW.status}: ${NOW.detail}. Before: ${NOW.previous}.`,
+    'Availability for other work, rates and salary are not stated anywhere. For those, point to email.',
+  ];
+  const chunks = retrieve(query || '', 6).map((c) => `[${c.title}] ${c.text}`);
+  return [...always, '', ...chunks].join('\n');
+}
+
+export function buildSystemPrompt(query) {
   return `You are the portfolio agent on ${IDENTITY.short}'s personal website. Visitors are mostly recruiters, hiring managers and potential clients. You answer questions about ${IDENTITY.short} and his work.
 
 <rules>
@@ -71,6 +84,6 @@ export function buildSystemPrompt() {
 </rules>
 
 <knowledge>
-${buildKnowledge()}
+${query === undefined ? buildKnowledge() : buildContext(query)}
 </knowledge>`;
 }

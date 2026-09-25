@@ -18,8 +18,6 @@ const MAX_TOKENS = 450;
 const MAX_BODY = 16 * 1024;
 const UPSTREAM_TIMEOUT_MS = 20_000;
 
-let systemPrompt;
-
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -58,7 +56,8 @@ export default async function handler(req, res) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return send(res, 503, { error: 'agent_offline' });
 
-  systemPrompt ??= buildSystemPrompt();
+  const lastUser = checked.messages[checked.messages.length - 1].content;
+  const systemPrompt = buildSystemPrompt(lastUser);
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
@@ -76,7 +75,7 @@ export default async function handler(req, res) {
         model: MODEL,
         max_tokens: MAX_TOKENS,
         temperature: 0.3,
-        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+        system: systemPrompt,
         messages: checked.messages,
       }),
     });
