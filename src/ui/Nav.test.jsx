@@ -22,3 +22,27 @@ describe('Nav', () => {
     expect(screen.getByRole('link', { name: 'Rizky Nanda' })).toHaveAttribute('href', '#top');
   });
 });
+
+describe('Nav mobile menu', () => {
+  it('opens and closes, and closes after a link is picked', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    const { container } = render(<Nav />);
+    const btn = screen.getByRole('button', { name: 'Open menu' });
+    expect(container.querySelector('#mobile-menu')).toHaveAttribute('hidden');
+
+    fireEvent.click(btn);
+    expect(btn).toHaveAttribute('aria-expanded', 'true');
+    expect(container.querySelector('#mobile-menu')).not.toHaveAttribute('hidden');
+
+    fireEvent.click(container.querySelector('#mobile-menu a[href="#about"]'));
+    expect(container.querySelector('#mobile-menu')).toHaveAttribute('hidden');
+  });
+
+  it('closes on Escape', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    const { container } = render(<Nav />);
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(container.querySelector('#mobile-menu')).toHaveAttribute('hidden');
+  });
+});
