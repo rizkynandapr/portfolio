@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { QUICK, findQuickAnswer, guessLang } from './quickAnswers.js';
+import { QUICK, findQuickAnswer } from './quickAnswers.js';
+import { guessLang } from './rag/answer.js';
 import PROJECTS from '../data/projects.js';
 
 describe('quickAnswers', () => {

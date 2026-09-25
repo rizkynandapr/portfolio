@@ -129,8 +129,8 @@
 }
 .agent-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); }
 .agent-status[data-status='live'] .agent-status-dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
-.agent-status[data-status='offline'] { color: var(--text-2); }
-.agent-status[data-status='offline'] .agent-status-dot { background: var(--signal); }
+.agent-status:not([data-status='live']) { color: var(--text-2); }
+.agent-status:not([data-status='live']) .agent-status-dot { background: var(--accent); }
 
 .agent-mail {
   display: inline-flex;
@@ -150,3 +150,16 @@
 .agent-suggest-label { color: var(--faint); font-size: 10px; }
 .agent-suggest[data-compact] { display: flex; flex-wrap: wrap; gap: 6px; }
 .agent-suggest[data-compact] .agent-chip { width: auto; padding: 6px 10px; font-size: 11.5px; border-radius: 999px; }
+
+.agent-sources { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.agent-source {
+  padding: 4px 8px;
+  border-radius: var(--r-s);
+  border: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: none;
+  transition: border-color .2s var(--ease), background .2s var(--ease);
+}
+.agent-source:hover { border-color: var(--accent); background: var(--accent-soft); }

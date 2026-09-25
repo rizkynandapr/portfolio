@@ -1,6 +1,5 @@
-// Answers for the suggested questions. They come straight from what the site
-// already says, so they work instantly, cost nothing, and still work when the
-// live model is switched off. Anything else goes to /api/chat.
+// Hand-written answers for the suggested questions. Everything else is
+// answered by the in-browser search in ./rag (or by /api/chat if a key is set).
 
 export const QUICK = [
   {
@@ -28,16 +27,4 @@ const INDEX = new Map(QUICK.map((x) => [norm(x.q), x.a]));
 
 export function findQuickAnswer(text) {
   return INDEX.get(norm(text)) ?? null;
-}
-
-export function offlineReply(lang) {
-  return lang === 'id'
-    ? 'Jawaban live lagi dimatikan, jadi pertanyaan bebas belum bisa aku jawab. Pertanyaan yang ada di bawah tetap jalan. Atau kirim pertanyaanmu langsung ke Rizky lewat email, nanti dia yang jawab.'
-    : "Live answers are switched off at the moment, so I can't take free-form questions. The suggested ones below still work, or you can send your question to Rizky by email and he'll answer it himself.";
-}
-
-// Rough guess, only used to pick the language of the offline reply.
-const ID_WORDS = /\b(apa|gimana|bagaimana|siapa|kenapa|dong|nggak|gak|yang|dan|itu|kak|bisa|ada|kerja|proyek)\b/i;
-export function guessLang(text) {
-  return ID_WORDS.test(text) ? 'id' : 'en';
 }

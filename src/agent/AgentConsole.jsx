@@ -2,7 +2,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { IDENTITY } from '../data/profile.js';
 import { onAgentOpen } from './agentBus.js';
 import askAgent, { agentStatus } from './askAgent.js';
-import { SUGGESTIONS, findQuickAnswer, offlineReply, guessLang } from './quickAnswers.js';
+import { SUGGESTIONS, findQuickAnswer } from './quickAnswers.js';
+import { answer as localAnswer } from './rag/answer.js';
 import './AgentConsole.css';
 
 const MAX_INPUT = 500;
@@ -12,9 +13,11 @@ const QUICK_DELAY_MS = 450; // a beat before a quick answer, so it doesn't feel 
 const mailto = (q) =>
   `mailto:${IDENTITY.email}?subject=${encodeURIComponent('Question from your portfolio')}&body=${encodeURIComponent(q)}`;
 
-// Suggested questions answer instantly from site data. Anything else goes to
-// /api/chat; if live answers are off, the visitor gets a way to email the
-// question instead of a dead end. Replies render as text nodes, never HTML.
+// Answers come from the site itself: hand-written replies for the suggested
+// questions, and an in-browser search (BM25 over the page content) for
+// everything else, with links to the sections it quotes. No model, no tokens.
+// If ANTHROPIC_API_KEY is ever set on the server, free-form questions go to
+// /api/chat instead. Replies render as text nodes, never HTML.
 export default function AgentConsole() {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('unknown'); // 'unknown' | 'live' | 'offline'
@@ -76,20 +79,25 @@ export default function AgentConsole() {
       return;
     }
 
-    if (status === 'offline') {
+    const fromSite = () => {
+      const a = localAnswer(q);
+      return { role: 'assistant', content: a.text, sources: a.sources, email: a.email ? q : undefined };
+    };
+
+    if (status !== 'live') {
+      await new Promise((r) => setTimeout(r, QUICK_DELAY_MS));
       setBusy(false);
-      setMessages([...history, { role: 'assistant', content: offlineReply(guessLang(q)), email: q }]);
+      setMessages([...history, fromSite()]);
       return;
     }
 
     const res = await askAgent(history);
     setBusy(false);
     if (res.ok) {
-      setStatus('live');
       setMessages([...history, { role: 'assistant', content: res.reply }]);
     } else if (res.offline) {
       setStatus('offline');
-      setMessages([...history, { role: 'assistant', content: offlineReply(guessLang(q)), email: q }]);
+      setMessages([...history, fromSite()]);
     } else {
       setError(res.error);
       setMessages(history.slice(0, -1)); // keep roles alternating for the next try
@@ -130,7 +138,7 @@ export default function AgentConsole() {
             {status !== 'unknown' && (
               <span className="agent-status" data-status={status}>
                 <span className="agent-status-dot" aria-hidden="true" />
-                {status === 'live' ? 'live' : 'quick answers'}
+                {status === 'live' ? 'live' : 'site search'}
               </span>
             )}
             <button type="button" className="agent-close" onClick={close} aria-label="Close agent">×</button>
@@ -147,6 +155,13 @@ export default function AgentConsole() {
             <div key={i} className="agent-msg" data-role={m.role}>
               <span className="agent-who mono">{m.role === 'user' ? 'you' : 'agent'}</span>
               {m.content}
+              {m.sources?.length > 0 && (
+                <span className="agent-sources">
+                  {m.sources.map((src) => (
+                    <a key={src.title} href={src.href} className="agent-source mono">↳ {src.title}</a>
+                  ))}
+                </span>
+              )}
               {m.email && (
                 <a className="agent-mail mono" href={mailto(m.email)}>Email this question ↗</a>
               )}
@@ -179,7 +194,7 @@ export default function AgentConsole() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             maxLength={MAX_INPUT}
-            placeholder={status === 'offline' ? 'Pick a question above, or type one to email' : 'Ask about projects, stack, experience…'}
+            placeholder="Ask about projects, stack, experience…"
             autoComplete="off"
             disabled={busy}
           />

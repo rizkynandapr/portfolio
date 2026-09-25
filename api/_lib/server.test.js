@@ -87,3 +87,13 @@ describe('/api/status', () => {
     delete process.env.ANTHROPIC_API_KEY;
   });
 });
+
+describe('buildSystemPrompt(query)', () => {
+  it('sends only matching chunks, far smaller than the full knowledge', () => {
+    const full = buildSystemPrompt();
+    const scoped = buildSystemPrompt('how does the citation validator work');
+    expect(scoped.length).toBeLessThan(full.length * 0.5);
+    expect(scoped).toContain('Citation Validator');
+    expect(scoped).toContain('Cekat.AI');
+  });
+});

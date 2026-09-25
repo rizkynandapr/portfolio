@@ -40,27 +40,47 @@ src/
   data/profile.js      identity, telemetry, roles, stack — shared with the agent
   chapters/            opening + portrait, replay, systems index, compact, stack, about (story + now card), contact
   flow/                auto-play trace: diagram, chapter, useAutoplay, mobile stepper, layouts/
-  agent/               agent console UI and client
+  agent/               agent console, client, quick answers
+    rag/               in-browser retrieval: corpus, BM25 search, answer builder
   stage/               scroll host, smooth scroll, motion preferences
   styles/              fonts, shared primitives
   ui/                  nav (scrollspy, clock, theme toggle), section head, copy-email
 public/theme.js        sets data-theme before first paint (external, CSP-safe)
 ```
 
-## The agent (`/api/chat`)
+## The agent
 
-Set these in **Vercel → Settings → Environment Variables** (see `.env.example`):
+The "Ask my agent" console works **without any API key**. It is a small
+retrieval system that runs in the browser:
+
+- `src/agent/rag/corpus.js` chunks everything the site already says: each
+  project, each pipeline step, roles, story, stack, contact.
+- `src/agent/rag/search.js` is BM25 over those chunks, with a short
+  Indonesian→English term map so questions in Bahasa find English text.
+- `src/agent/rag/answer.js` handles a few intents (hello, thanks, rates,
+  off-topic), picks the best-matching sentences, quotes them, and links each
+  answer back to the section it came from. If nothing matches well, it says
+  so and offers to email the question.
+- The four suggested questions have hand-written answers (`quickAnswers.js`).
+
+No tokens, no server round trip, nothing to rate-limit.
+
+### Optional: live answers with Claude
+
+Set `ANTHROPIC_API_KEY` in Vercel and `/api/status` reports `live`; free-form
+questions then go to `/api/chat`, which sends the model only the chunks that
+match the question (about a third of the full knowledge block). If the key is
+removed, the console drops back to site search on its own.
 
 | Variable | Required | Notes |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | yes | Without it the console says the agent is offline. |
+| `ANTHROPIC_API_KEY` | no | Turns on live answers. |
 | `ANTHROPIC_MODEL` | no | Defaults to `claude-haiku-4-5`. |
-| `UPSTASH_REDIS_REST_URL` / `_TOKEN` | recommended | Shared rate-limit counters across instances. |
+| `UPSTASH_REDIS_REST_URL` / `_TOKEN` | recommended with a key | Shared rate-limit counters across instances. |
 | `ALLOWED_ORIGINS` | no | Extra origins, e.g. a custom domain on a different host. |
 | `CHAT_GLOBAL_DAILY_CAP` | no | Hard daily cap across all visitors. Default 800. |
 
-Also set a **monthly spend limit on the Anthropic key** — it is the last line
-of defence whatever the rate limiter does.
+If you do set a key, also set a monthly spend limit on it.
 
 ### Security posture
 

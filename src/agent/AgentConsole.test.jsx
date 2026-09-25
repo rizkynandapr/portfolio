@@ -25,7 +25,7 @@ describe('AgentConsole', () => {
   it('shows the offline badge when live answers are off', async () => {
     mockFetch({ live: false });
     await openConsole();
-    expect(await screen.findByText('quick answers')).toBeInTheDocument();
+    expect(await screen.findByText('site search')).toBeInTheDocument();
   });
 
   it('answers a suggested question instantly, without calling the model', async () => {
@@ -37,16 +37,37 @@ describe('AgentConsole', () => {
     expect(globalThis.fetch).not.toHaveBeenCalledWith('/api/chat', expect.anything());
   });
 
-  it('offers to email a free-form question when offline', async () => {
+  it('answers free-form questions from the site, with links to the source section', async () => {
     mockFetch({ live: false });
     await openConsole();
-    await screen.findByText('quick answers');
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Kamu kerja di mana sekarang?' } });
+    await screen.findByText('site search');
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'how does the citation validator work?' } });
     fireEvent.submit(screen.getByRole('textbox').closest('form'));
+    await act(async () => { vi.advanceTimersByTime(600); });
+    expect(await screen.findByText(/Every citation gets parsed/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /LegalitasAI · Citation Validator/ })).toHaveAttribute('href', '#work-01');
+    expect(globalThis.fetch).not.toHaveBeenCalledWith('/api/chat', expect.anything());
+  });
+
+  it('offers to email a question the site cannot answer', async () => {
+    mockFetch({ live: false });
+    await openConsole();
+    await screen.findByText('site search');
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'berapa tarifnya per proyek?' } });
+    fireEvent.submit(screen.getByRole('textbox').closest('form'));
+    await act(async () => { vi.advanceTimersByTime(600); });
     const link = await screen.findByRole('link', { name: /Email this question/ });
     expect(link.getAttribute('href')).toContain('mailto:rizkynandapr@gmail.com');
-    expect(link.getAttribute('href')).toContain(encodeURIComponent('Kamu kerja di mana sekarang?'));
-    expect(screen.getByText(/Jawaban live lagi dimatikan/)).toBeInTheDocument();
+    expect(link.getAttribute('href')).toContain(encodeURIComponent('berapa tarifnya per proyek?'));
+  });
+
+  it('falls back to site search if the server says it is offline', async () => {
+    mockFetch({ live: true });
+    await openConsole();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'what tools does he use' } });
+    fireEvent.submit(screen.getByRole('textbox').closest('form'));
+    expect(await screen.findByText(/Claude API, Cekat AI, n8n/)).toBeInTheDocument();
+    expect(screen.getByText('site search')).toBeInTheDocument();
   });
 
   it('shows the live reply as plain text', async () => {
