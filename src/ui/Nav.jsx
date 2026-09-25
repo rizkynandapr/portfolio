@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import PROJECTS from '../data/projects.js';
 import { IDENTITY } from '../data/profile.js';
 import useClock from './useClock.js';
@@ -21,6 +22,14 @@ export default function Nav() {
   const time = useClock(IDENTITY.timezone);
   const active = useScrollSpy(SPY_IDS);
   const [theme, toggleTheme] = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
   return (
     <nav className="nav" aria-label="Primary">
@@ -65,6 +74,31 @@ export default function Nav() {
           )}
         </button>
         <a href={IDENTITY.cv} download className="nav-cv mono">CV ↓</a>
+        <button
+          type="button"
+          className="nav-icon nav-menu-btn"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen((o) => !o)}
+        >
+          <span className="nav-burger" data-open={menuOpen ? 'true' : undefined} aria-hidden="true"><span /><span /></span>
+        </button>
+      </div>
+      <div id="mobile-menu" className="nav-mobile" hidden={!menuOpen}>
+        <ul>
+          {LINKS.map((l, i) => (
+            <li key={l.href}>
+              <a
+                href={l.href}
+                className={`nav-mobile-link ${l.match.includes(active) ? 'is-active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="mono">0{i + 1}</span>{l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );
