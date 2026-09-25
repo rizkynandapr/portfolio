@@ -1,23 +1,23 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { IDENTITY } from '../data/profile.js';
 import { onAgentOpen } from './agentBus.js';
-import askAgent from './askAgent.js';
+import askAgent, { agentStatus } from './askAgent.js';
+import { SUGGESTIONS, findQuickAnswer, offlineReply, guessLang } from './quickAnswers.js';
 import './AgentConsole.css';
 
 const MAX_INPUT = 500;
 const MAX_TURNS = 12; // keep in step with the server's validation limit
+const QUICK_DELAY_MS = 450; // a beat before a quick answer, so it doesn't feel canned
 
-const SUGGESTIONS = [
-  'Which project should I look at first?',
-  'How does the WhatsApp agent capture orders?',
-  'Ceritain LegalitasAI dong',
-  'What did Rizky do at Aksoro?',
-];
+const mailto = (q) =>
+  `mailto:${IDENTITY.email}?subject=${encodeURIComponent('Question from your portfolio')}&body=${encodeURIComponent(q)}`;
 
-// Replies render as plain text nodes, never as HTML, so model output can't
-// inject markup into the page.
+// Suggested questions answer instantly from site data. Anything else goes to
+// /api/chat; if live answers are off, the visitor gets a way to email the
+// question instead of a dead end. Replies render as text nodes, never HTML.
 export default function AgentConsole() {
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState('unknown'); // 'unknown' | 'live' | 'offline'
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -25,9 +25,17 @@ export default function AgentConsole() {
   const inputRef = useRef(null);
   const logRef = useRef(null);
   const launcherRef = useRef(null);
+  const checked = useRef(false);
   const titleId = useId();
 
   useEffect(() => onAgentOpen(() => setOpen(true)), []);
+
+  // Ask the server once, on first open, whether live answers are available.
+  useEffect(() => {
+    if (!open || checked.current) return;
+    checked.current = true;
+    agentStatus().then(setStatus);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -60,10 +68,28 @@ export default function AgentConsole() {
     setError('');
     setBusy(true);
 
+    const quick = findQuickAnswer(q);
+    if (quick) {
+      await new Promise((r) => setTimeout(r, QUICK_DELAY_MS));
+      setBusy(false);
+      setMessages([...history, { role: 'assistant', content: quick }]);
+      return;
+    }
+
+    if (status === 'offline') {
+      setBusy(false);
+      setMessages([...history, { role: 'assistant', content: offlineReply(guessLang(q)), email: q }]);
+      return;
+    }
+
     const res = await askAgent(history);
     setBusy(false);
     if (res.ok) {
+      setStatus('live');
       setMessages([...history, { role: 'assistant', content: res.reply }]);
+    } else if (res.offline) {
+      setStatus('offline');
+      setMessages([...history, { role: 'assistant', content: offlineReply(guessLang(q)), email: q }]);
     } else {
       setError(res.error);
       setMessages(history.slice(0, -1)); // keep roles alternating for the next try
@@ -72,6 +98,8 @@ export default function AgentConsole() {
   }
 
   const onSubmit = (e) => { e.preventDefault(); send(input); };
+  const asked = new Set(messages.filter((m) => m.role === 'user').map((m) => m.content));
+  const remaining = SUGGESTIONS.filter((s) => !asked.has(s));
 
   return (
     <>
@@ -98,34 +126,48 @@ export default function AgentConsole() {
       >
         <header className="agent-head mono">
           <span id={titleId}><span className="agent-key">agent</span> // rnp-assistant</span>
-          <button type="button" className="agent-close" onClick={close} aria-label="Close agent">×</button>
+          <span className="agent-head-right">
+            {status !== 'unknown' && (
+              <span className="agent-status" data-status={status}>
+                <span className="agent-status-dot" aria-hidden="true" />
+                {status === 'live' ? 'live' : 'quick answers'}
+              </span>
+            )}
+            <button type="button" className="agent-close" onClick={close} aria-label="Close agent">×</button>
+          </span>
         </header>
 
         <div ref={logRef} className="agent-log" data-lenis-prevent aria-live="polite">
           <p className="agent-msg" data-role="assistant">
-            Hi, I'm the agent on {IDENTITY.short}'s site. Ask about his projects,
-            his stack, or where he's worked. English or Bahasa Indonesia is fine.
+            Hey. I'm a small agent that knows what's on this site: {IDENTITY.short.split(' ')[0]}'s
+            projects, his stack, where he's worked. Ask in English or Bahasa Indonesia.
           </p>
 
-          {messages.length === 0 && (
-            <ul className="agent-suggest">
-              {SUGGESTIONS.map((s) => (
-                <li key={s}>
-                  <button type="button" className="agent-chip mono" onClick={() => send(s)}>{s}</button>
-                </li>
-              ))}
-            </ul>
-          )}
-
           {messages.map((m, i) => (
-            <p key={i} className="agent-msg" data-role={m.role}>
+            <div key={i} className="agent-msg" data-role={m.role}>
               <span className="agent-who mono">{m.role === 'user' ? 'you' : 'agent'}</span>
               {m.content}
-            </p>
+              {m.email && (
+                <a className="agent-mail mono" href={mailto(m.email)}>Email this question ↗</a>
+              )}
+            </div>
           ))}
 
-          {busy && <p className="agent-msg agent-thinking mono" data-role="assistant">thinking<span aria-hidden="true">…</span></p>}
+          {busy && <p className="agent-msg agent-thinking mono" data-role="assistant">typing<span aria-hidden="true">…</span></p>}
           {error && <p className="agent-error mono" role="alert">{error}</p>}
+
+          {remaining.length > 0 && !busy && (
+            <div className="agent-suggest-wrap">
+              {messages.length > 0 && <p className="agent-suggest-label mono">Or try</p>}
+              <ul className="agent-suggest" data-compact={messages.length > 0 ? 'true' : undefined}>
+                {remaining.map((s) => (
+                  <li key={s}>
+                    <button type="button" className="agent-chip mono" onClick={() => send(s)}>{s}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <form className="agent-form" onSubmit={onSubmit}>
@@ -137,7 +179,7 @@ export default function AgentConsole() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             maxLength={MAX_INPUT}
-            placeholder="Ask about projects, stack, experience…"
+            placeholder={status === 'offline' ? 'Pick a question above, or type one to email' : 'Ask about projects, stack, experience…'}
             autoComplete="off"
             disabled={busy}
           />
