@@ -20,7 +20,7 @@ function projectBlock(p) {
 
 function rolesBlock() {
   return ROLES.map((r) => {
-    const head = `- ${r.title}, ${r.org} (${r.location}), ${r.status === 'incoming' ? `incoming, starts ${r.start}` : r.period}`;
+    const head = `- ${r.title}, ${r.org} (${r.location}), ${r.status === 'incoming' ? `incoming, starts ${r.start}` : r.status === 'current' ? `current role since ${r.start}` : r.period}`;
     return r.points.length ? `${head}\n  ${r.points.join('\n  ')}` : head;
   }).join('\n');
 }

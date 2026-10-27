@@ -32,7 +32,7 @@ export default function Compact({ project, index = 1 }) {
 
           <p className="compact-links">
             {project.links.demo && (
-              <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Live demo ↗</a>
+              <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{project.demoLabel ?? 'Live demo'} ↗</a>
             )}
             {project.links.code && (
               <a href={project.links.code} target="_blank" rel="noopener noreferrer" className="btn">Code ↗</a>

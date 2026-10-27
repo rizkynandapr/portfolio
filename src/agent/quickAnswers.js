@@ -16,7 +16,7 @@ export const QUICK = [
   },
   {
     q: 'What did Rizky do at Aksoro?',
-    a: "He was an AI Trainer there from June to September 2026. He wrote and debugged system prompts for client bots that handled FAQs, lead qualification and order tracking, and built the n8n automations that connected those bots to WhatsApp and CRMs. He also reworked knowledge sources and routing so fewer wrong answers got escalated.\n\nThe contract finished in September. He joins the IT Delivery team at Cekat.AI on 5 October.",
+    a: "He was an AI Trainer there from June to September 2026. He wrote and debugged system prompts for client bots that handled FAQs, lead qualification and order tracking, and built the n8n automations that connected those bots to WhatsApp and CRMs. He also reworked knowledge sources and routing so fewer wrong answers got escalated.\n\nThe contract finished in September. Since 5 October he has been on the IT Delivery team at Cekat.AI, setting up client agents in the Cekat dashboard.",
   },
 ];
 

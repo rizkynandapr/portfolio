@@ -57,9 +57,9 @@ export default function Nav() {
       </ul>
 
       <div className="nav-right">
-        <span className="nav-clock mono" title="Local time in Yogyakarta">
+        <span className="nav-clock mono" title="Local time in BSD, Tangerang">
           <span className="pulse" aria-hidden="true" />
-          YOG {time} <span className="nav-tz">UTC+7</span>
+          BSD {time} <span className="nav-tz">UTC+7</span>
         </span>
         <button
           type="button"

@@ -3,9 +3,9 @@ import PROJECTS from './projects.js';
 import { COMPOSITIONS } from '../flow/layouts/index.js';
 
 describe('PROJECTS', () => {
-  it('has five projects with unique ids', () => {
-    expect(PROJECTS).toHaveLength(5);
-    expect(new Set(PROJECTS.map((p) => p.id)).size).toBe(5);
+  it('has eight projects with unique ids', () => {
+    expect(PROJECTS).toHaveLength(8);
+    expect(new Set(PROJECTS.map((p) => p.id)).size).toBe(8);
   });
 
   it('gives every flow project a valid composition', () => {

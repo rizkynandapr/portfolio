@@ -6,8 +6,8 @@ export const IDENTITY = {
   short: 'Rizky Nanda',
   callsign: 'RNP',
   role: 'AI Automation Engineer',
-  base: 'Yogyakarta, Indonesia',
-  coords: '07.80°S 110.36°E',
+  base: 'BSD, Tangerang, Indonesia',
+  coords: '06.30°S 106.65°E',
   timezone: 'Asia/Jakarta',
   email: 'rizkynandapr@gmail.com',
   cv: '/Rizky-Nanda-Praditia-CV.pdf',
@@ -26,18 +26,23 @@ export const TELEMETRY = [
   { value: '98%', label: 'Model accuracy', context: 'LSTM · ~32k headlines' },
   { value: '43', label: 'Tests in CI', context: 'Eval-gated · 7 ADRs' },
   { value: '10', label: 'SMB clients shipped', context: 'WhatsApp · CRM · n8n' },
-  { value: '5', label: 'Systems with public code', context: 'Every repo linked below' },
+  { value: '8', label: 'Systems with public code', context: 'Every repo linked below' },
 ];
 
 export const ROLES = [
   {
     org: 'Cekat.AI',
     title: 'IT Delivery',
-    period: 'Oct 2026',
+    period: 'Oct 2026 – now',
     start: '5 Oct 2026',
-    status: 'incoming',
+    status: 'current',
     location: 'BSD, Tangerang',
-    points: [],
+    points: [
+      'Build and launch AI customer service agents for client businesses in the Cekat dashboard, from the first system prompt to go-live',
+      'Write and tune the prompts and knowledge sources behind each agent, then fix whatever real customer chats break',
+      'Connect agents to client systems with n8n workflows, webhooks and API integrations',
+      'Act as the technical contact for each client while their agent is being set up',
+    ],
   },
   {
     org: 'Aksoro',
@@ -75,8 +80,8 @@ export const ROLES = [
 
 export const STACK = [
   { label: 'AI / LLM', items: ['Claude API', 'Cekat AI', 'n8n', 'RAG (BM25 + dense)', 'Langfuse', 'TensorFlow', 'Hugging Face'] },
-  { label: 'Languages & Data', items: ['Python', 'SQL', 'Pandas', 'FastAPI', 'Streamlit'] },
-  { label: 'Web & Infra', items: ['React', 'Supabase', 'Qdrant', 'Docker', 'Vercel'] },
+  { label: 'Languages & Data', items: ['Python', 'SQL', 'Pandas', 'XGBoost', 'statsmodels', 'FastAPI'] },
+  { label: 'Web & Infra', items: ['React', 'Gradio', 'Streamlit', 'Supabase', 'Qdrant', 'Docker', 'Vercel'] },
   { label: 'Channels', items: ['WhatsApp Cloud API', 'Google Sheets', 'Webhooks'] },
 ];
 
@@ -87,17 +92,18 @@ export const EDUCATION = [
 
 // Where things stand right now. Shown in the About card and given to the agent.
 export const NOW = {
-  status: 'Joining Cekat.AI',
-  detail: 'IT Delivery team, starting 5 Oct 2026',
+  status: 'IT Delivery at Cekat.AI',
+  since: 'since 5 Oct',
+  detail: 'Building AI agents for client businesses in the Cekat dashboard, since 5 Oct 2026',
   previous: 'AI Trainer at Aksoro, Jun – Sep 2026 (contract finished)',
-  base: 'Yogyakarta, heading to BSD in October',
+  base: 'BSD, Tangerang (moved from Yogyakarta)',
 };
 
 // The About story, first person. Every fact here also appears elsewhere on the page.
 export const STORY = [
   "I started on the database side. At UMY I was the teaching assistant for Database Implementation, which mostly meant debugging 36 students' SQL live and explaining why one query ran faster than another. After that came six months as a DBA intern at damirich.id, and then Hacktiv8's data science bootcamp. The first model I put online for anyone to try was a clickbait detector on Hugging Face.",
   "Chat pulled me in after that. At Aksoro I wrote and debugged system prompts for client bots that handled FAQs, qualified leads and tracked orders. Most days I'm inside an n8n canvas or a prompt draft, waiting to see what breaks. Something always does. Usually it's one node with a typo in its name, or a prompt that reads fine to me and means something else to the model. Finding that gap is most of the job.",
-  "My Aksoro contract finished in September. On 5 October I join the IT Delivery team at Cekat.AI.",
+  "My Aksoro contract finished in September, and on 5 October I joined the IT Delivery team at Cekat.AI. Now I set up client agents in the Cekat dashboard and build the n8n workflows that connect them to everything else. On my own time I still build things that test my assumptions. UMKM-Bench, for example, checks how LLMs cope with the way Indonesians actually type on WhatsApp.",
 ];
 
 export const PRINCIPLES = [

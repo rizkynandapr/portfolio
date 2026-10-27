@@ -9,7 +9,7 @@ const cases = [
   ['what is ApplyIQ', /parsed right in the browser/, 'ApplyIQ'],
   ['talentscout scoring weights', /40% hard skills/, 'TalentScout · Weighted Scoring'],
   ['bagaimana cara onboarding klien baru di chatbot whatsapp', /duplicate the workflow/, 'WhatsApp AI Chatbot · Config Klien'],
-  ['kerja di mana sekarang?', /Joining Cekat\.AI/, 'Right now'],
+  ['kerja di mana sekarang?', /IT Delivery at Cekat\.AI/, 'Right now'],
   ['what tools does he use', /Claude API, Cekat AI, n8n/, 'Stack and tools'],
   ['kuliah dimana', /S\.Kom in Informatics/, 'Education'],
   ['how can I contact him', /rizkynandapr@gmail\.com/, 'Contact'],
@@ -54,7 +54,7 @@ describe('site RAG', () => {
   });
 
   it('keeps abbreviations and emails whole when splitting sentences', () => {
-    expect(splitSentences('S.Kom in Informatics. Joining Cekat.AI soon. Mail a@b.com now.')).toHaveLength(3);
+    expect(splitSentences('S.Kom in Informatics. Works at Cekat.AI now. Mail a@b.com now.')).toHaveLength(3);
   });
 
   it('expands Indonesian terms and strips -nya', () => {

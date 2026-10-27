@@ -62,7 +62,7 @@ describe('chapters', () => {
     render(<StackExp />);
     expect(screen.getByText('Aksoro')).toBeInTheDocument();
     expect(screen.getByText('Cekat.AI')).toBeInTheDocument();
-    expect(screen.getByText(/Incoming/)).toBeInTheDocument();
+    expect(screen.getByText(/Now · since/)).toBeInTheDocument();
     expect(screen.getByText('damirich.id')).toBeInTheDocument();
     expect(screen.getByText('AI / LLM')).toBeInTheDocument();
     expect(screen.getByText('Web & Infra')).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('chapters', () => {
   it('About tells the story and shows what is happening now', () => {
     render(<About />);
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('From SQL labs');
-    expect(screen.getByText('Joining Cekat.AI')).toBeInTheDocument();
+    expect(screen.getByText('IT Delivery at Cekat.AI')).toBeInTheDocument();
     expect(screen.getAllByText(/contract finished/).length).toBeGreaterThan(0);
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3);
   });

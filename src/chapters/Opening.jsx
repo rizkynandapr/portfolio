@@ -82,7 +82,7 @@ export default function Opening() {
 
           <p className="portrait-chip portrait-chip-now">
             <span className="pulse" aria-hidden="true" />
-            <span><strong>{NOW.status}</strong> · 5 Oct</span>
+            <span><strong>{NOW.status}</strong> · {NOW.since}</span>
           </p>
 
           <p className="portrait-chip portrait-chip-metric">

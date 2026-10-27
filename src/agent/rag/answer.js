@@ -80,9 +80,9 @@ function lead(chunk, lang) {
     case 'node':
       return t(lang, `In ${m.project}, the "${m.label}" step:`, `Di ${m.project}, langkah "${m.label}":`);
     case 'role':
-      return m.status === 'incoming'
-        ? t(lang, `He joins ${m.org} as ${m.title} on ${m.start}.`, `Dia mulai di ${m.org} sebagai ${m.title} tanggal ${m.start}.`)
-        : t(lang, `${m.title} at ${m.org}, ${m.period}. What he did there:`, `${m.title} di ${m.org}, ${m.period}. Yang dia kerjakan:`);
+      if (m.status === 'incoming') return t(lang, `He joins ${m.org} as ${m.title} on ${m.start}.`, `Dia mulai di ${m.org} sebagai ${m.title} tanggal ${m.start}.`);
+      if (m.status === 'current') return t(lang, `${m.title} at ${m.org} since ${m.start}. What he does there:`, `${m.title} di ${m.org} sejak ${m.start}. Yang dia kerjakan:`);
+      return t(lang, `${m.title} at ${m.org}, ${m.period}. What he did there:`, `${m.title} di ${m.org}, ${m.period}. Yang dia kerjakan:`);
     case 'story':
       return t(lang, 'In his own words:', 'Kata Rizky sendiri:');
     case 'principle':

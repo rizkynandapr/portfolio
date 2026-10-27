@@ -30,9 +30,9 @@ export default function StackExp() {
             {ROLES.map((r) => (
               <li key={r.org + r.title} className="stackexp-role" data-status={r.status}>
                 <p className="stackexp-period mono">
-                  {r.status === 'incoming'
-                    ? <><span className="pulse" aria-hidden="true" /> Incoming · starts {r.start ?? r.period}</>
-                    : r.period}
+                  {r.status === 'incoming' && <><span className="pulse" aria-hidden="true" /> Incoming · starts {r.start ?? r.period}</>}
+                  {r.status === 'current' && <><span className="pulse" aria-hidden="true" /> Now · since {r.start ?? r.period}</>}
+                  {!r.status && r.period}
                 </p>
                 <h3>{r.title}</h3>
                 <p className="stackexp-org"><span>{r.org}</span> · {r.location}</p>

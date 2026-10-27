@@ -23,10 +23,12 @@
   background: var(--void);
   border: 1.5px solid var(--line-2);
 }
-.stackexp-role[data-status='incoming']::before { background: var(--signal); border-color: var(--signal); box-shadow: 0 0 0 4px var(--signal-10); }
+.stackexp-role[data-status='incoming']::before,
+.stackexp-role[data-status='current']::before { background: var(--signal); border-color: var(--signal); box-shadow: 0 0 0 4px var(--signal-10); }
 
 .stackexp-period { display: inline-flex; align-items: center; gap: 9px; color: var(--dim); }
-.stackexp-role[data-status='incoming'] .stackexp-period { color: var(--hl); }
+.stackexp-role[data-status='incoming'] .stackexp-period,
+.stackexp-role[data-status='current'] .stackexp-period { color: var(--hl); }
 .stackexp-role h3 { font-size: 22px; font-stretch: 110%; margin-top: 10px; }
 .stackexp-org { color: var(--dim); font-size: 14px; margin-top: 6px; }
 .stackexp-org span { color: var(--text); }
