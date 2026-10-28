@@ -25,7 +25,7 @@ export const TELEMETRY = [
   { value: '<30m', label: 'Client onboarding', context: 'WhatsApp agent template' },
   { value: '98%', label: 'Model accuracy', context: 'LSTM · ~32k headlines' },
   { value: '43', label: 'Tests in CI', context: 'Eval-gated · 7 ADRs' },
-  { value: '10', label: 'SMB clients shipped', context: 'WhatsApp · CRM · n8n' },
+  { value: '15', label: 'SMB clients shipped', context: 'Aksoro · WhatsApp · CRM · n8n' },
   { value: '8', label: 'Systems with public code', context: 'Every repo linked below' },
 ];
 
@@ -50,6 +50,7 @@ export const ROLES = [
     period: 'Jun – Sep 2026',
     location: 'Yogyakarta',
     points: [
+      'Built and deployed AI agents for 15 SMB clients on the Claude API, Cekat, and n8n',
       'Design, write, and debug system prompts for FAQ handling, lead qualification, and order tracking across client accounts',
       'Build n8n automation connecting AI agents to WhatsApp, CRM, and internal client systems',
       'Restructure Knowledge Source and routing logic to cut down on wrong-answer escalations',
