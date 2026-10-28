@@ -21,6 +21,17 @@ describe('quickAnswers', () => {
     for (const { a } of QUICK) expect(a).not.toMatch(/—/);
   });
 
+  it('gives every question a known topic and a unique wording', async () => {
+    const { TOPICS } = await import('./quickAnswers.js');
+    for (const x of QUICK) expect(TOPICS).toContain(x.topic);
+    expect(new Set(QUICK.map((x) => x.q)).size).toBe(QUICK.length);
+  });
+
+  it('only quotes project numbers that the project write-ups state', () => {
+    const text = PROJECTS.map((p) => [p.build, p.problem, p.metric.label, ...(p.flow ?? []).map((n) => n.detail)].join(' ')).join(' ');
+    for (const n of ['93', '78', '1.55%', '1.24%', '1.99%', '35 km', '40%', '30%', '20%', '10%']) expect(text).toContain(n);
+  });
+
   it('guesses Indonesian from common words', () => {
     expect(guessLang('gimana cara kerjanya?')).toBe('id');
     expect(guessLang('how does it work?')).toBe('en');

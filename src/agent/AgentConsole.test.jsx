@@ -37,6 +37,19 @@ describe('AgentConsole', () => {
     expect(globalThis.fetch).not.toHaveBeenCalledWith('/api/chat', expect.anything());
   });
 
+  it('shows four questions first and the rest behind "More questions", grouped by topic', async () => {
+    mockFetch({ live: false });
+    await openConsole();
+    expect(screen.getByRole('button', { name: QUICK[3].q })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: QUICK[4].q })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /More questions \(13\)/ }));
+    expect(screen.getByText('Contact')).toBeInTheDocument();
+    const bench = QUICK.find((x) => x.q === 'What is UMKM-Bench?');
+    fireEvent.click(screen.getByRole('button', { name: bench.q }));
+    await act(async () => { vi.advanceTimersByTime(600); });
+    expect(await screen.findByText((t) => t.startsWith('A small benchmark'))).toBeInTheDocument();
+  });
+
   it('answers free-form questions from the site, with links to the source section', async () => {
     mockFetch({ live: false });
     await openConsole();

@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { IDENTITY } from '../data/profile.js';
 import { onAgentOpen } from './agentBus.js';
 import askAgent, { agentStatus } from './askAgent.js';
-import { SUGGESTIONS, findQuickAnswer } from './quickAnswers.js';
+import { QUICK, TOPICS, FEATURED, findQuickAnswer } from './quickAnswers.js';
 import { answer as localAnswer } from './rag/answer.js';
 import './AgentConsole.css';
 
@@ -25,6 +25,7 @@ export default function AgentConsole() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [showAll, setShowAll] = useState(false);
   const inputRef = useRef(null);
   const logRef = useRef(null);
   const launcherRef = useRef(null);
@@ -107,7 +108,9 @@ export default function AgentConsole() {
 
   const onSubmit = (e) => { e.preventDefault(); send(input); };
   const asked = new Set(messages.filter((m) => m.role === 'user').map((m) => m.content));
-  const remaining = SUGGESTIONS.filter((s) => !asked.has(s));
+  const remaining = QUICK.filter((x) => !asked.has(x.q));
+  const shortList = remaining.slice(0, messages.length > 0 ? 3 : FEATURED);
+  const hidden = remaining.length - shortList.length;
 
   return (
     <>
@@ -174,13 +177,42 @@ export default function AgentConsole() {
           {remaining.length > 0 && !busy && (
             <div className="agent-suggest-wrap">
               {messages.length > 0 && <p className="agent-suggest-label mono">Or try</p>}
-              <ul className="agent-suggest" data-compact={messages.length > 0 ? 'true' : undefined}>
-                {remaining.map((s) => (
-                  <li key={s}>
-                    <button type="button" className="agent-chip mono" onClick={() => send(s)}>{s}</button>
-                  </li>
-                ))}
-              </ul>
+              {showAll ? (
+                TOPICS.map((topic) => {
+                  const items = remaining.filter((x) => x.topic === topic);
+                  if (!items.length) return null;
+                  return (
+                    <div key={topic} className="agent-topic">
+                      <p className="agent-suggest-label mono">{topic}</p>
+                      <ul className="agent-suggest" data-compact={messages.length > 0 ? 'true' : undefined}>
+                        {items.map((x) => (
+                          <li key={x.q}>
+                            <button type="button" className="agent-chip mono" onClick={() => send(x.q)}>{x.q}</button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })
+              ) : (
+                <ul className="agent-suggest" data-compact={messages.length > 0 ? 'true' : undefined}>
+                  {shortList.map((x) => (
+                    <li key={x.q}>
+                      <button type="button" className="agent-chip mono" onClick={() => send(x.q)}>{x.q}</button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {hidden > 0 && (
+                <button
+                  type="button"
+                  className="agent-more mono"
+                  aria-expanded={showAll}
+                  onClick={() => setShowAll((v) => !v)}
+                >
+                  {showAll ? 'Fewer questions' : `More questions (${hidden}) ↓`}
+                </button>
+              )}
             </div>
           )}
         </div>
