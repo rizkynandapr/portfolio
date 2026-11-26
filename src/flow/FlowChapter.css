@@ -82,7 +82,7 @@
   transition: opacity .3s .08s var(--ease), transform .3s .08s var(--ease);
 }
 /* The outgoing pane leaves fast and first, so two never overlap. */
-.flow-pane[data-state='dim'] { opacity: 0; transform: translateY(8px); pointer-events: none; transition-duration: .12s; transition-delay: 0s; }
+.flow-pane[data-state='dim'] { opacity: 0; pointer-events: none; transition-duration: .12s; transition-delay: 0s; }
 
 .flow-pane-counter { color: var(--dim); }
 .flow-pane-flag { color: var(--alert); }

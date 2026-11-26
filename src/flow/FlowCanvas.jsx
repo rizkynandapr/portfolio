@@ -56,7 +56,7 @@ export default function FlowCanvas({ graph, exec, selected, onSelect, onExecute,
         >
           <div
             className="n8n-canvas"
-            style={{ width: graph.width, height: graph.height, transform: `scale(${scale})` }}
+            style={{ width: graph.width, height: graph.height, transform: scale < 1 ? `scale(${scale})` : undefined }}
           >
             <svg className="n8n-wires" width={graph.width} height={graph.height} aria-hidden="true">
               <defs>

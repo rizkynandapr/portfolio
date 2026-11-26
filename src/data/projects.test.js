@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import vercel from '../../vercel.json';
 import PROJECTS from './projects.js';
 
 describe('PROJECTS', () => {
@@ -53,5 +54,17 @@ describe('PROJECTS', () => {
     expect(flagged).toHaveLength(1);
     expect(flagged[0].name).toBe('LegalitasAI');
     expect(flagged[0].flow[flagged[0].flagIndex].label).toBe('Citation Validator');
+  });
+
+  // Embeds must stay inside what the CSP in vercel.json allows to be framed.
+  it('only embeds https Hugging Face Spaces, which the CSP allows', () => {
+    const csp = vercel.headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
+    expect(csp).toContain('frame-src https://*.hf.space');
+    const embeds = PROJECTS.filter((p) => p.embed);
+    expect(embeds.length).toBeGreaterThan(0);
+    for (const p of embeds) {
+      expect(p.embed).toMatch(/^https:\/\/[a-z0-9-]+\.hf\.space$/);
+      expect(p.tryHint).toBeTruthy();
+    }
   });
 });

@@ -1,4 +1,5 @@
 import SectionHead from '../ui/SectionHead.jsx';
+import LiveDemo from './LiveDemo.jsx';
 import './Compact.css';
 
 // A project with no pipeline to trace, one brief, one number.
@@ -40,6 +41,8 @@ export default function Compact({ project, index = 1 }) {
           </p>
         </div>
       </div>
+
+      {project.embed && <LiveDemo project={project} />}
     </section>
   );
 }

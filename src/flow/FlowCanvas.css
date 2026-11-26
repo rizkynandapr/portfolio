@@ -19,7 +19,11 @@
 }
 :root[data-theme='light'] .n8n { --warn: #b7791f; }
 
-.n8n-viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+.n8n-viewport { overflow: hidden; }
+/* Only a canvas that genuinely does not fit becomes a sideways scroller. */
+@media (max-width: 900px) {
+  .n8n-viewport { overflow-x: auto; scrollbar-width: thin; }
+}
 .n8n-stage { position: relative; margin: 0 auto; }
 .n8n-canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
 .n8n-wires { position: absolute; inset: 0; overflow: visible; }
@@ -69,7 +73,7 @@
 .n8n-node {
   position: absolute;
   width: 140px;
-  translate: -50% -32px;
+  margin: -32px 0 0 -70px; /* centre the tile on (x, y) without a transform */
   display: grid;
   justify-items: center;
   gap: 4px;
