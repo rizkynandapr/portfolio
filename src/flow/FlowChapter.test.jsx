@@ -1,10 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
 import FlowChapter from './FlowChapter.jsx';
-import useAutoplay from './useAutoplay.js';
-
-vi.mock('./useAutoplay.js', () => ({ default: vi.fn() }));
-const at = (active) => ({ active, select: vi.fn(), paused: false, running: true });
 
 const PROJECT = {
   id: '01',
@@ -13,7 +9,7 @@ const PROJECT = {
   period: '2026 · Open source',
   problem: 'A lawyer is expensive, and a normal LLM gives a confident answer that is sometimes wrong.',
   build: 'A RAG assistant that is not allowed to answer without proof, moving revoked-doc filtering into ranking took Hit Rate@5 from 63.6% to 81.8%.',
-  composition: 'vertical',
+  canvas: { at: [[0, 0], [1, 0], [2, 0]], edges: [[0, 1], [1, 2]] },
   flowLabel: 'One question, end to end',
   flagIndex: 1,
   links: { code: 'https://github.com/rizkynandapr/legalitasai' },
@@ -25,8 +21,9 @@ const PROJECT = {
   ],
 };
 
+afterEach(() => vi.useRealTimers());
+
 beforeEach(() => {
-  vi.mocked(useAutoplay).mockReturnValue(at(0));
   window.matchMedia = (q) => ({
     matches: false, media: q, onchange: null,
     addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
@@ -34,14 +31,27 @@ beforeEach(() => {
 });
 
 describe('FlowChapter', () => {
-  it('lets a visitor pick any node from the node list', async () => {
-    const select = vi.fn();
-    vi.mocked(useAutoplay).mockReturnValue({ active: 0, select, paused: false, running: true });
-    render(<FlowChapter project={PROJECT} />);
-    const buttons = screen.getAllByRole('button', { pressed: false });
-    expect(buttons.length).toBe(PROJECT.flow.length - 1);
-    buttons[0].click();
-    expect(select).toHaveBeenCalledWith(1);
+  it('lets a visitor pick any node on the canvas to read it', () => {
+    const { container } = render(<FlowChapter project={PROJECT} />);
+    screen.getByRole('button', { name: /02 Citation Validator/ }).click();
+    return Promise.resolve().then(() => {
+      expect(container.querySelector('[data-pane="1"]')).not.toHaveAttribute('data-state', 'dim');
+    });
+  });
+
+  it('does nothing until Execute workflow is pressed, then runs every node', async () => {
+    vi.useFakeTimers();
+    const { container } = render(<FlowChapter project={PROJECT} />);
+    expect(container.querySelectorAll('.n8n-node[data-status="idle"]')).toHaveLength(3);
+    await act(async () => { vi.advanceTimersByTime(10000); });
+    expect(container.querySelectorAll('.n8n-node[data-status="idle"]')).toHaveLength(3);
+
+    await act(async () => { screen.getByRole('button', { name: /Execute workflow/ }).click(); });
+    for (let t = 0; t < 40; t++) {
+      await act(async () => { vi.advanceTimersByTime(250); });
+    }
+    expect(container.querySelectorAll('.n8n-node[data-status="success"]')).toHaveLength(3);
+    expect(screen.getByRole('button', { name: /Run again/ })).toBeInTheDocument();
   });
 
   it('renders the replay showcase only for projects that ask for it', () => {
@@ -87,15 +97,14 @@ describe('FlowChapter', () => {
     expect(container.querySelector('[data-pane="1"]')).toHaveAttribute('data-state', 'dim');
   });
 
-  it('marks the flag pane when it is the active one, and dims a non-flag pane', () => {
-    vi.mocked(useAutoplay).mockReturnValue(at(PROJECT.flagIndex));
+  it('marks the flag pane when the guardrail node is shown', async () => {
     const { container } = render(<FlowChapter project={PROJECT} />);
+    await act(async () => { screen.getByRole('button', { name: /02 Citation Validator/ }).click(); });
     expect(container.querySelector(`[data-pane="${PROJECT.flagIndex}"]`)).toHaveAttribute('data-state', 'flag');
     expect(container.querySelector('[data-pane="2"]')).toHaveAttribute('data-state', 'dim');
   });
 
   it('renders no flag pane for a project with no flagIndex', () => {
-    vi.mocked(useAutoplay).mockReturnValue(at(0));
     const noFlag = { ...PROJECT, flagIndex: undefined };
     const { container } = render(<FlowChapter project={noFlag} />);
     expect(container.querySelector('[data-state="flag"]')).not.toBeInTheDocument();
@@ -110,30 +119,4 @@ describe('FlowChapter', () => {
     expect(container.querySelector('.flow-chapter')).toHaveClass('is-static');
   });
 
-  it('renders the desktop pane list (not the stepper) when the viewport does not match the mobile query', () => {
-    const originalMatchMedia = window.matchMedia;
-    window.matchMedia = (q) => ({
-      matches: false, media: q, onchange: null,
-      addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
-    });
-    const { container } = render(<FlowChapter project={PROJECT} />);
-    expect(container.querySelector('.flow-panes')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /next node/i })).not.toBeInTheDocument();
-    window.matchMedia = originalMatchMedia;
-  });
-
-  it('renders the stepper (not the desktop pane list) when the mobile media query matches', () => {
-    const originalMatchMedia = window.matchMedia;
-    window.matchMedia = (q) => ({
-      matches: q === '(max-width: 768px)', media: q, onchange: null,
-      addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
-    });
-    render(<FlowChapter project={PROJECT} />);
-    expect(screen.getByRole('button', { name: /next node/i })).toBeInTheDocument();
-    expect(document.querySelector('.flow-panes')).not.toBeInTheDocument();
-    for (const n of PROJECT.flow) {
-      expect(screen.getByText(n.detail)).toBeInTheDocument();
-    }
-    window.matchMedia = originalMatchMedia;
-  });
 });

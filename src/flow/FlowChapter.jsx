@@ -1,30 +1,32 @@
-import { useRef } from 'react';
-import { LAYOUTS } from './layouts/index.js';
-import FlowDiagram from './FlowDiagram.jsx';
-import useAutoplay from './useAutoplay.js';
+import { useMemo, useState } from 'react';
+import { buildGraph } from './graph.js';
+import FlowCanvas from './FlowCanvas.jsx';
+import FlowLog from './FlowLog.jsx';
+import useExecution from './useExecution.js';
 import useReducedMotion from '../stage/useReducedMotion.js';
 import nodeState from './nodeState.js';
-import FlowStepper from './FlowStepper.jsx';
-import useIsMobile from '../stage/useIsMobile.js';
 import SectionHead from '../ui/SectionHead.jsx';
 import ReplayConsole from '../chapters/ReplayConsole.jsx';
 import './FlowChapter.css';
 
-const VIEWPORT = { width: 520, height: 760 };
 const pad = (n) => String(n).padStart(2, '0');
 
-// One project: a brief (problem, build, stack) and a trace that walks the
-// real pipeline on its own. Nothing pins or hijacks scroll, the trace runs
-// while it is on screen and any node can be picked to pause and read.
+// One project: a brief (problem, build, stack) and its pipeline as an n8n
+// style canvas. Nothing moves until the visitor presses Execute workflow;
+// any node can be clicked to read what it does.
 export default function FlowChapter({ project, index = 1 }) {
-  const traceRef = useRef(null);
   const reduced = useReducedMotion();
-  const mobile = useIsMobile();
+  const graph = useMemo(() => buildGraph(project), [project]);
+  const exec = useExecution(graph, { reduced });
+  const [selected, setSelected] = useState(0);
+  const [picked, setPicked] = useState(false);
   const steps = project.flow.length;
-  const { active, select, paused } = useAutoplay({ ref: traceRef, steps, enabled: !reduced && !mobile });
 
-  const layout = LAYOUTS[project.composition];
-  const positions = layout(project.flow, VIEWPORT);
+  // While a run is going the detail follows the running node, unless the
+  // visitor has clicked a node themselves.
+  const shown = exec.current >= 0 && !picked ? exec.current : selected;
+  const select = (i) => { setSelected(i); setPicked(true); };
+  const execute = () => { setPicked(false); exec.execute(); };
 
   return (
     <section
@@ -72,78 +74,49 @@ export default function FlowChapter({ project, index = 1 }) {
         </div>
       </header>
 
-      {mobile ? (
-        <div className="flow-trace-mobile">
-          <p className="flow-trace-label mono">Trace · <span>{project.flowLabel}</span></p>
-          <FlowStepper project={project} />
+      <div className="flow-trace panel">
+        <div className="flow-trace-bar mono">
+          <span className="flow-trace-title"><span className="flow-trace-key">Workflow</span><span>{project.flowLabel}</span></span>
+          <span className="flow-trace-status" data-status={exec.status}>
+            <span className="flow-trace-dot" />
+            {exec.status === 'idle' && 'idle'}
+            {exec.status === 'running' && `running · node ${pad(exec.current + 1)} / ${pad(steps)}`}
+            {exec.status === 'done' && 'success'}
+          </span>
+          <span className="flow-trace-note">simulated run</span>
         </div>
-      ) : (
-        <div ref={traceRef} className="flow-trace panel">
-          <div className="flow-trace-bar mono">
-            <span className="flow-trace-title"><span className="flow-trace-key">Trace</span><span>{project.flowLabel}</span></span>
-            {!reduced && (
-              <span className="flow-trace-status" data-paused={paused ? 'true' : undefined} aria-hidden="true">
-                <span className="flow-trace-dot" />{paused ? 'paused' : 'running'}
-              </span>
-            )}
-            <span className="flow-trace-progress" aria-hidden="true">
-              node {pad(active + 1)} / {pad(steps)}
-            </span>
-          </div>
 
-          <div className="flow-trace-grid">
-            <div className="flow-trace-diagram">
-              <FlowDiagram
-                positions={positions}
-                activeIndex={reduced ? -1 : active}
-                flagIndex={project.flagIndex}
-                viewport={VIEWPORT}
-                onSelect={reduced ? undefined : select}
-              />
-            </div>
+        <FlowCanvas
+          graph={graph}
+          exec={exec}
+          selected={shown}
+          onSelect={select}
+          onExecute={execute}
+          name={project.name}
+        />
 
-            <div className="flow-trace-side">
-              <ol className="flow-panes" aria-live="polite">
-                {project.flow.map((n, i) => (
-                  <li
-                    key={n.label}
-                    data-pane={i}
-                    data-state={nodeState(i, active, project.flagIndex)}
-                    className="flow-pane"
-                  >
-                    <p className="flow-pane-counter mono">
-                      Node {pad(i + 1)} / {pad(steps)}
-                      {i === project.flagIndex && <span className="flow-pane-flag"> · guardrail</span>}
-                    </p>
-                    <h3 className="flow-pane-title">{n.label}</h3>
-                    <p className="flow-pane-detail">{n.detail}</p>
-                  </li>
-                ))}
-              </ol>
+        <div className="flow-trace-grid">
+          <ol className="flow-panes" aria-live="polite">
+            {project.flow.map((n, i) => (
+              <li
+                key={n.label}
+                data-pane={i}
+                data-state={nodeState(i, shown, project.flagIndex)}
+                className="flow-pane"
+              >
+                <p className="flow-pane-counter mono">
+                  Node {pad(i + 1)} / {pad(steps)} · {graph.nodes[i].subtitle}
+                  {i === project.flagIndex && <span className="flow-pane-flag"> · guardrail</span>}
+                </p>
+                <h3 className="flow-pane-title">{n.label}</h3>
+                <p className="flow-pane-detail">{n.detail}</p>
+              </li>
+            ))}
+          </ol>
 
-              {!reduced && (
-                <ol className="flow-nodes" aria-label={`${project.name} pipeline nodes`}>
-                  {project.flow.map((n, i) => (
-                    <li key={n.label}>
-                      <button
-                        type="button"
-                        className="flow-node mono"
-                        data-state={nodeState(i, active, project.flagIndex)}
-                        data-done={i < active ? 'true' : undefined}
-                        aria-pressed={i === active}
-                        onClick={() => select(i)}
-                      >
-                        <span className="flow-node-i">{pad(i + 1)}</span>
-                        <span className="flow-node-label">{n.label}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </div>
-          </div>
+          <FlowLog log={exec.log} status={exec.status} total={steps} />
         </div>
-      )}
+      </div>
     </section>
   );
 }

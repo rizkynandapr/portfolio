@@ -4,6 +4,20 @@ import './Opening.css';
 
 const PROOF = ['WhatsApp agents', 'RAG with guardrails', 'n8n pipelines', 'Evals in CI'];
 
+// Each headline word sits in its own mask so it can rise into place. Spaces
+// stay as real text nodes, so the heading still reads as one sentence.
+function Words({ text, start = 0 }) {
+  return text.split(' ').map((w, i, all) => {
+    const n = start + i;
+    return (
+      <span key={`${w}${n}`}>
+        <span className="sw"><span className="sw-in" style={{ '--w': n }}>{w}</span></span>
+        {i < all.length - 1 ? ' ' : null}
+      </span>
+    );
+  });
+}
+
 export default function Opening() {
   return (
     <section id="top" className="chapter opening" aria-labelledby="opening-title">
@@ -15,8 +29,9 @@ export default function Opening() {
           </p>
 
           <h1 id="opening-title" className="opening-title">
-            I ship AI agents <span className="opening-soft">that survive</span>{' '}
-            <span className="opening-signal">real customers.</span>
+            <Words text="I ship AI agents" />{' '}
+            <span className="opening-soft"><Words text="that survive" start={4} /></span>{' '}
+            <span className="opening-signal"><Words text="real customers." start={6} /></span>
           </h1>
 
           <p className="opening-sub">
@@ -27,8 +42,8 @@ export default function Opening() {
           </p>
 
           <ul className="opening-proof mono">
-            {PROOF.map((p) => (
-              <li key={p}>
+            {PROOF.map((p, i) => (
+              <li key={p} style={{ '--i': i }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
                 {p}
               </li>
@@ -60,6 +75,7 @@ export default function Opening() {
         </div>
 
         <figure className="portrait">
+          <span className="portrait-aura" aria-hidden="true" />
           <div className="portrait-frame">
             <picture>
               <source type="image/webp" srcSet="/img/rizky-640.webp 640w, /img/rizky-986.webp 986w" sizes="(max-width: 900px) 80vw, 460px" />
@@ -94,7 +110,7 @@ export default function Opening() {
 
       <dl className="telemetry" aria-label="Numbers from the projects below">
         {TELEMETRY.map((m, i) => (
-          <div key={m.label} className="telemetry-cell">
+          <div key={m.label} className="telemetry-cell" style={{ '--i': i }}>
             <dt className="telemetry-label mono">
               <span className="telemetry-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               {m.label}

@@ -1,6 +1,7 @@
 import PROJECTS from './data/projects.js';
 import Stage from './stage/Stage.jsx';
 import useSmoothScroll from './stage/useSmoothScroll.js';
+import useMotion from './motion/useMotion.js';
 import Nav from './ui/Nav.jsx';
 import Opening from './chapters/Opening.jsx';
 import SystemsIndex from './chapters/SystemsIndex.jsx';
@@ -16,6 +17,7 @@ const compactProjects = PROJECTS.filter((p) => !p.flow);
 
 export default function App() {
   useSmoothScroll();
+  useMotion();
 
   return (
     <>
