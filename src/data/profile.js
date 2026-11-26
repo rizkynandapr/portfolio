@@ -4,7 +4,6 @@
 export const IDENTITY = {
   name: 'Rizky Nanda Praditia',
   short: 'Rizky Nanda',
-  callsign: 'RNP',
   role: 'AI Automation Engineer',
   base: 'BSD, Tangerang, Indonesia',
   coords: '06.30°S 106.65°E',

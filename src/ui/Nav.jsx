@@ -5,6 +5,7 @@ import useClock from './useClock.js';
 import useScrollSpy from './useScrollSpy.js';
 import useTheme from './useTheme.js';
 import './Nav.css';
+import CloverMark from './CloverMark.jsx';
 
 const WORK_IDS = PROJECTS.map((p) => `work-${p.id}`);
 
@@ -34,7 +35,7 @@ export default function Nav() {
   return (
     <nav className="nav" aria-label="Primary">
       <a href="#top" className="nav-mark" aria-label={IDENTITY.short}>
-        <span className="nav-logo" aria-hidden="true">{IDENTITY.callsign}<span className="nav-logo-dot" /></span>
+        <span className="nav-logo" aria-hidden="true"><CloverMark /></span>
         <span className="nav-name">Rizky <span className="nav-name-soft">Nanda</span></span>
       </a>
 
