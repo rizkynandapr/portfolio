@@ -1,3 +1,8 @@
+// Canvas specs: [col, row] per node in flow order, then the wires between
+// them. A 'retry' wire loops back to an earlier node.
+const chain = (n) => Array.from({ length: n - 1 }, (_, i) => [i, i + 1]);
+const row = (n) => Array.from({ length: n }, (_, i) => [i, 0]);
+
 const WA_CHATBOT_FLOW = [
   { label: 'WhatsApp Webhook', detail: 'A customer messages the business number and Meta pushes the event to n8n. A separate GET branch handles the one-time hub.challenge verification, so the same endpoint both registers and receives.' },
   { label: 'Config Klien', detail: 'Every client-specific value lives in this one node: WhatsApp token, Phone Number ID, Claude key, Sheet ID, owner number. To onboard a new business I duplicate the workflow and edit this node. Nothing else changes.' },
@@ -54,7 +59,8 @@ const PROJECTS = [
     links: { code: 'https://github.com/rizkynandapr/legalitasai' },
     flow: LEGALITASAI_FLOW,
     flowLabel: 'One question, end to end',
-    composition: 'vertical',
+    // Validator sends a hallucinated citation back to Generate once.
+    canvas: { at: row(8), edges: [...chain(8), [6, 5, 'retry']] },
     flagIndex: 6,
   },
   {
@@ -71,7 +77,8 @@ const PROJECTS = [
     flow: WA_CHATBOT_FLOW,
     flowLabel: 'One message in, node by node',
     showcase: 'replay',
-    composition: 'horizontal',
+    // The follow-up cron is its own trigger on a second row, as in n8n.
+    canvas: { at: [...row(8), [0, 1]], edges: chain(8) },
   },
   {
     id: '03',
@@ -86,7 +93,11 @@ const PROJECTS = [
     links: { code: 'https://github.com/rizkynandapr/applyiq-web' },
     flow: APPLYIQ_FLOW,
     flowLabel: 'The pipeline, node by node',
-    composition: 'branching',
+    // CV Improvement runs alongside the job search and rejoins at Supabase.
+    canvas: {
+      at: [[0, 0], [1, 0], [2, 0], [2.5, 1], [3, 0], [4, 0], [5, 0], [6, 0.5]],
+      edges: [[0, 1], [1, 2], [2, 4], [4, 5], [5, 6], [6, 7], [1, 3], [3, 7]],
+    },
   },
   {
     id: '04',
@@ -101,7 +112,8 @@ const PROJECTS = [
     links: { code: 'https://github.com/rizkynandapr/TalentScout-AI-Recruitment' },
     flow: TALENTSCOUT_FLOW,
     flowLabel: 'How a CV becomes a hiring decision',
-    composition: 'convergent',
+    // Two inputs meet at the analysis step.
+    canvas: { at: [[0, 0], [0, 1], [1, 0.5], [2, 0.5], [3, 0.5]], edges: [[0, 2], [1, 2], [2, 3], [3, 4]] },
   },
   {
     id: '05',

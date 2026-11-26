@@ -79,11 +79,12 @@ describe('App — systems index', () => {
     }
   });
 
-  it('gives every flow chapter a clickable node list', () => {
+  it('gives every flow chapter a canvas of clickable nodes and an execute button', () => {
     const { container } = render(<App />);
     for (const p of PROJECTS.filter((x) => x.flow)) {
-      const nodes = container.querySelectorAll(`#work-${p.id} .flow-node`);
+      const nodes = container.querySelectorAll(`#work-${p.id} button.n8n-node`);
       expect(nodes).toHaveLength(p.flow.length);
+      expect(container.querySelector(`#work-${p.id} .n8n-exec`)).toHaveTextContent('Execute workflow');
     }
   });
 });
