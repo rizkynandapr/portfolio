@@ -145,8 +145,6 @@ const PROJECTS = [
       code: 'https://github.com/rizkynandapr/rmt52-bandung-housing',
       demo: 'https://huggingface.co/spaces/nandutt/nandutt',
     },
-    embed: 'https://nandutt-nandutt.hf.space',
-    tryHint: 'Describe a house in one line, in Bahasa or English, and get a price range plus cheaper areas nearby.',
   },
   {
     id: '07',
@@ -162,8 +160,6 @@ const PROJECTS = [
       code: 'https://github.com/rizkynandapr/BBCA-Stock-Price-Forecasting',
       demo: 'https://huggingface.co/spaces/nandutt/bbca-forecast',
     },
-    embed: 'https://nandutt-bbca-forecast.hf.space',
-    tryHint: 'Choose how many sessions to forecast and press refresh. It pulls the latest BBCA.JK prices and refits on the spot.',
   },
   {
     id: '08',
@@ -179,8 +175,6 @@ const PROJECTS = [
       code: 'https://github.com/rizkynandapr/clickbait-detector',
       demo: 'https://huggingface.co/spaces/nandutt/clickbait_detektor',
     },
-    embed: 'https://nandutt-clickbait-detektor.hf.space',
-    tryHint: 'Paste any English headline and see whether the model calls it clickbait.',
   },
 ];
 
