@@ -85,6 +85,7 @@ export default function Nav() {
           <span className="nav-burger" data-open={menuOpen ? 'true' : undefined} aria-hidden="true"><span /><span /></span>
         </button>
       </div>
+      <span className="nav-progress" aria-hidden="true" />
       <div id="mobile-menu" className="nav-mobile" hidden={!menuOpen}>
         <ul>
           {LINKS.map((l, i) => (

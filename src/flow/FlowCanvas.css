@@ -234,18 +234,22 @@
 .n8n-exec:disabled { cursor: progress; opacity: .92; }
 .n8n-exec:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-/* Idle invitation: a soft ring breathing out of the button. */
-.n8n[data-status='idle'] .n8n-exec::after {
+/* Idle invitation: a soft ring breathing out of the button, three times
+   once the canvas is on screen, then still — nothing loops offscreen. */
+.flow-trace[data-in] .n8n[data-status='idle'] .n8n-exec::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--signal) 55%, transparent);
-  animation: n8n-invite 2s var(--ease) infinite;
+  border: 2px solid var(--signal);
+  pointer-events: none;
+  opacity: 0;
+  animation: n8n-invite 2s .8s var(--ease) 3;
 }
+/* transform + opacity only, so the ring never repaints the page */
 @keyframes n8n-invite {
-  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--signal) 55%, transparent); }
-  80%, 100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--signal) 0%, transparent); }
+  0%   { transform: scale(1); opacity: .7; }
+  80%, 100% { transform: scale(1.18, 1.5); opacity: 0; }
 }
 
 .n8n-spin {

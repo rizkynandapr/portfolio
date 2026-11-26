@@ -13,12 +13,16 @@ export default function useMotion() {
 
   useLayoutEffect(() => {
     // Scroll progress runs regardless: it is position feedback, not motion.
+    // It writes a transform on its own bar only. Writing a custom property on
+    // :root here would restyle the whole document on every scroll frame.
+    const bar = document.querySelector('.nav-progress');
+    if (!bar) return undefined;
     const root = document.documentElement;
     let raf = 0;
     const update = () => {
       raf = 0;
       const max = root.scrollHeight - window.innerHeight;
-      root.style.setProperty('--progress', max > 0 ? (window.scrollY / max).toFixed(4) : '0');
+      bar.style.transform = `scaleX(${max > 0 ? (window.scrollY / max).toFixed(4) : 0})`;
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
