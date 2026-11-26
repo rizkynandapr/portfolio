@@ -7,9 +7,10 @@ second voice. Light and dark themes, following the system by default with a
 toggle in the nav.
 
 It opens with a portrait and a short pitch, a telemetry strip where every number is backed by a project write-up, and an
-index of every system on one screen. Each pipeline gets a trace that walks the
-real node graph on its own while it is on screen — no scroll pinning — and any
-node can be clicked to pause and read. The WhatsApp chapter adds a scripted
+index of every system on one screen. Each pipeline is drawn as an n8n-style
+canvas in its real topology (loops, parallel branches, merging inputs) that
+runs only when the visitor presses **Execute workflow**; any node can be
+clicked to read what it does. The WhatsApp chapter adds a scripted
 replay of the agent capturing an order. An **Ask my agent** console answers
 questions about the work, grounded only in this site's own data.
 
@@ -36,10 +37,11 @@ api/
   chat.js              POST /api/chat — the portfolio agent
   _lib/                validation, rate limiting, knowledge/system prompt (not routes)
 src/
-  data/projects.js     project content, flow graphs, headline metric per project
+  data/projects.js     project content, flow nodes + canvas wiring, headline metric per project
   data/profile.js      identity, telemetry, roles, stack — shared with the agent
   chapters/            opening + portrait, replay, systems index, compact, stack, about (story + now card), contact
-  flow/                auto-play trace: diagram, chapter, useAutoplay, mobile stepper, layouts/
+  flow/                n8n-style canvas: graph + schedule, useExecution, canvas, execution log
+  motion/              page motion: boot sequence, scroll reveals, count-up, pointer effects
   agent/               agent console, client, quick answers
     rag/               in-browser retrieval: corpus, BM25 search, answer builder
   stage/               scroll host, smooth scroll, motion preferences
