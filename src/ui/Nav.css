@@ -23,17 +23,6 @@
   border-radius: var(--r-m);
   background: var(--text);
   color: var(--void);
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: .02em;
-}
-.nav-logo-dot {
-  position: absolute;
-  right: 5px; bottom: 5px;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--signal);
 }
 .nav-name { font-weight: 700; font-size: 17px; letter-spacing: -.02em; }
 .nav-name-soft { color: var(--dim); font-weight: 500; }
